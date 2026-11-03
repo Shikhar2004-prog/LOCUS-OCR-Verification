@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+data_raw/
+data/*/crops/
+data/*/manifest.jsonl
+data/*/*.pt
+logs/
+pydeps/
+paper/tables/*.tex
+paper/figs/*.pdf
+paper/figs/*.png

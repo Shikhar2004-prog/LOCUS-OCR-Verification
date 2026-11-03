@@ -1,0 +1,20 @@
+{
+ "_legend": {
+  "G": "label matches the image (genuine case)",
+  "N": "label noise: ground truth does not match the visible text",
+  "C": "crop problem: text clipped or neighbour fragment",
+  "A": "ambiguous",
+  "P": "claim correct only under the dataset's normalisation protocol, but its exact appearance (case, stripped punctuation) differs from the image"
+ },
+ "_annotator": "single annotator (AI assistant), visual inspection of the crop; to be re-verified by the authors",
+ "FUNSD_locus_wrong": "N C A G G G N A C G N G G G C N G N C N",
+ "CORD_locus_wrong": "G G C G G G G A A G G G C A N C N G C N",
+ "IAM_locus_wrong": "G G G G G G G G A A G G G G A G G G G N",
+ "FUNSD_parseq_fooled": "C A N N N N N N N C N N N N C N N N N N",
+ "CORD_parseq_fooled": "A A C A N G N A C N N C N N C A N N",
+ "IAM_parseq_fooled": "C A G C C C C C N C C C A A G C G G A C",
+ "SROIE_locus_wrong": "N G N G N N G G N N N N N N G N C G N G",
+ "SROIE_parseq_fooled": "N N N A N G N N N A C G N N G N G A A G",
+ "IIIT5K_locus_wrong": "P P N P P P P P G P P N P P P P P P P N",
+ "IIIT5K_parseq_fooled": "N N N C N N N C N A N N N N"
+}

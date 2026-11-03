@@ -1,0 +1,32 @@
+{
+ "FUNSD": {
+  "parseq_misread_correct": 38,
+  "of_which_locus_accepts": 14,
+  "parseq_fooled_errors": 158,
+  "of_which_locus_rejects": 20
+ },
+ "CORD": {
+  "parseq_misread_correct": 43,
+  "of_which_locus_accepts": 28,
+  "parseq_fooled_errors": 18,
+  "of_which_locus_rejects": 2
+ },
+ "SROIE": {
+  "parseq_misread_correct": 448,
+  "of_which_locus_accepts": 448,
+  "parseq_fooled_errors": 282,
+  "of_which_locus_rejects": 276
+ },
+ "IAM": {
+  "parseq_misread_correct": 419,
+  "of_which_locus_accepts": 312,
+  "parseq_fooled_errors": 64,
+  "of_which_locus_rejects": 15
+ },
+ "IIIT5K": {
+  "parseq_misread_correct": 4,
+  "of_which_locus_accepts": 3,
+  "parseq_fooled_errors": 14,
+  "of_which_locus_rejects": 0
+ }
+}

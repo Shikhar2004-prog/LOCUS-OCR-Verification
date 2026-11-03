@@ -1,0 +1,26 @@
+{
+ "LOCUS evidence extraction (TrOCR-base + PARSeq, both renderings)": {
+  "wps": 17.934843449463813,
+  "params": "358M (frozen)"
+ },
+ "LOCUS GNN (trainable)": {
+  "wps": NaN,
+  "params": "0.05M"
+ },
+ "PARSeq re-recognition": {
+  "wps": 372.3456878486595,
+  "params": "24M"
+ },
+ "Florence-2-base re-recognition": {
+  "wps": 14.942071204900364,
+  "params": "0.23B"
+ },
+ "Tesseract 5 (CPU, 1 thread)": {
+  "wps": 9.28044049579978,
+  "params": "--"
+ },
+ "Qwen2.5-VL-7B judge": {
+  "wps": 53.6936659894004,
+  "params": "8.3B"
+ }
+}
