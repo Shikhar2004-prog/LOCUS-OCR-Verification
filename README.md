@@ -86,6 +86,14 @@ Protocol notes:
 * SROIE ground truth is all upper case, so labels are case-insensitive.
 * IIIT5K uses the case-insensitive alphanumeric protocol, and every verifier receives the canonical claim.
 
+## Related publication
+
+This work extends the conference paper
+*Reading Between the Characters: Label-Efficient OCR Verification with Graph Neural Networks*
+(Sanhita Saxena, Vikash Tripathi, Syed Abbas; NICCAI 2026, Hyderabad, to appear).
+That paper verifies OCR few-shot with character-level relational line graphs on a private dataset. LOCUS replaces it with a
+segmentation-free counterfactual string graph and render-normalised evidence, and evaluates on five public benchmarks.
+
 ## Citation
 
 ```bibtex
@@ -94,6 +102,14 @@ Protocol notes:
   author = {Dubey, Shikhar and Saxena, Sanhita and Tripathi, Vikash and Abbas, Syed},
   year   = {2026},
   note   = {Under review}
+}
+
+@inproceedings{saxena2026reading,
+  title     = {Reading Between the Characters: Label-Efficient {OCR} Verification with Graph Neural Networks},
+  author    = {Saxena, Sanhita and Tripathi, Vikash and Abbas, Syed},
+  booktitle = {Proceedings of NICCAI 2026, Hyderabad, India},
+  year      = {2026},
+  note      = {To appear}
 }
 ```
 
