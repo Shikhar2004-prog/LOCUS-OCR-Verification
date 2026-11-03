@@ -1,0 +1,17 @@
+\section*{Abstract}
+Optical character recognition engines always return a transcription, so every pipeline must decide, word by word,
+whether to trust it. Existing verifiers judge the claim in isolation, by
+engine confidence, by agreement with a second recogniser, or by asking a large vision-language model. We instead ask
+whether the claim is the best explanation of the image among the strings it could have been confused with. LOCUS builds around each claim a small graph of plausible single-character edits and independent
+readings, scores every candidate string by how much better it explains the real image than a clean rendering of
+itself, cancelling the recogniser's language prior, and tests whether the claim is locally optimal with a
+relation-aware graph neural network. The network is pretrained without human labels from engine agreement and
+synthetic corruptions and adapts from a few labelled words. We introduce a benchmark of real recognition errors from
+two engines on five public datasets covering forms, receipts, handwriting and scene text. With 25 labelled words per
+class, LOCUS ranks correct above incorrect transcriptions better than engine confidence, learned confidence, engine
+voting, Florence-2 re-recognition and a seven-billion-parameter vision-language judge on every dataset, and attains
+the best average macro-F1. It is significantly better than re-recognition with a strong recogniser
+where that recogniser is fallible, comparable where it is in-domain, and behind it on its own scene-text benchmark.
+Significance, recogniser, rendering and message-passing analyses and a manual audit show that the gain comes from explicit, prior-cancelled counterfactual evidence and label-free pretraining.
+\vspace{5pt}
+\keywords{OCR verification; counterfactual reasoning; graph neural networks; few-shot learning; render normalisation; document analysis}

@@ -1,0 +1,36 @@
+\section{Related Work}
+\label{sec:related}
+\textbf{OCR confidence and failure prediction.} Engine confidence is the default verifier, and learned failure
+predictors regress the true-class probability from a classifier's own features~\cite{corbiere2019confidnet}. Both
+score a single hypothesis in isolation and need access to engine internals; neither compares the claim with its
+visual competitors.
+
+\textbf{Post-OCR correction with large models.} Since 2024 post-OCR processing has moved to large (multimodal)
+language models. Multimodal LLMs can transcribe and post-correct historical documents better than conventional
+pipelines~\cite{greif2025multimodal}, but LLM post-correction gives ``no free lunches'': gains depend on language,
+model size and input error rate, and correct text can be damaged~\cite{kanerva2025nofree}; the ICDAR 2026
+HIPE-OCRepair competition makes LLM-assisted post-correction a shared task~\cite{ehrmann2026hipe}. Vision--language
+models also act as judges or repair agents for document parsing: DOCR-Inspector fine-tunes a 7B model to enumerate
+parsing errors~\cite{zhang2025docrinspector}, and OCR-EDR trains a diagnosis-and-repair agent that may request
+renderings of its edits~\cite{ocredr2026}. These systems target page-level parsing, need large curated training sets
+and are orders of magnitude more expensive per word; we include a 7B judge~\cite{bai2025qwen25vl} as a baseline.
+
+\textbf{End-to-end OCR models and their hallucinations.} Unified models such as GOT-OCR2.0~\cite{wei2024got} and
+VLM-based PDF linearisers such as olmOCR~\cite{poznanski2025olmocr} read whole pages, and OCRBench v2 shows that even
+the strongest multimodal models still make frequent fine-grained recognition errors~\cite{fu2025ocrbenchv2}. Their
+errors are often \emph{plausible}: multimodal LLMs hallucinate text on degraded images~\cite{he2025seeing} and a low
+character error rate can hide hallucinated content~\cite{gardella2026lowcer}. This motivates an engine-agnostic verifier that
+asks whether the image supports \emph{this} string better than its near-miss rivals. Strong recognisers such as
+TrOCR~\cite{li2023trocr} and PARSeq~\cite{bautista2022parseq} are natural, frozen verifiers in this setting.
+
+\textbf{Contrast against a reference.} Visual contrastive decoding reduces hallucination by contrasting a model's
+outputs on the real and on a distorted image~\cite{leng2024vcd}. Our render-normalised ratio applies the same
+principle with a reference \emph{specific to each hypothesis}: a clean rendering of the very string being tested.
+
+\textbf{Graph networks for OCR verification.} Character-level graphs comparing real and synthetic glyphs have been
+used to verify Hindi OCR~\cite{dubey2025hindi}, and Saxena \emph{et al.}~\cite{saxena2026reading} represent each word as
+a relational line graph of real-versus-rendered character comparisons, verified few-shot by a GNN on a single private
+low-resolution dataset. Both require character segmentation of the word image and compare characters, not
+alternative readings. \ours{}
+needs no segmentation: its nodes are \emph{hypotheses} and its edges are edit operations between them, encoded with
+relation-aware attention~\cite{brody2022gatv2}.

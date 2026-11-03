@@ -1,0 +1,34 @@
+\section{Discussion and Limitations}
+\label{sec:discussion}
+\textbf{When does comparing hypotheses help?} \ours{} helps when its two recognisers \emph{disagree in correctness}: on
+words that only one verifier reads correctly, re-recognition with the other verifier is right only 26--62\% of the time,
+while \ours{} is right 64--99\% of the time on every dataset (Table~\ref{tab:strata}). It therefore gains most where
+recognisers are individually fallible and complementary (handwriting, camera receipts) and least where one in-domain
+recogniser is nearly always right (PARSeq on IIIT5K, TrOCR-printed on SROIE), and it does not require knowing in
+advance \emph{which} recogniser to trust: the best re-recognition baseline changes from dataset to dataset, whereas
+\ours{} is close to the best on all of them.
+
+\textbf{Limitations.} All design decisions were made on FUNSD and CORD; SROIE, IAM and IIIT5K are held out. (i)~Repair is bounded by whether the truth lies in $G(h)$, which holds for only about half of the
+handwriting errors (Table~\ref{tab:truth_in_graph}); verification degrades more gracefully because a claim can lose to a
+rival that is not the truth. (ii)~Pretraining relies on engine agreement, whose precision ranges from 84\% to 99\%
+(Appendix~\ref{app:pretrain}); it helps on four datasets but not on IAM, where agreement is least precise.
+(iii)~TrOCR's printed checkpoints were fine-tuned on SROIE and PARSeq was developed on scene-text benchmarks such as
+IIIT5K; the re-recognition baselines use the same recognisers, so the comparison is on equal footing, but absolute
+numbers there should be read with this in mind. (iv)~Message passing, the local-optimality term and render
+normalisation are individually redundant in the full model, and simple learners over the same evidence are almost as
+good: the counterfactual evidence, not the network, is the main contribution. (v)~\ours{} judges whether the exact
+string, including case and punctuation, explains the image; under protocols that normalise both away (IIIT5K) a claim
+such as \texttt{HoLLywooD} counts as correct but looks wrong. (vi)~All datasets are Latin-script. (vii)~Evidence
+extraction runs at about 18 words/s on one GPU; pruning the neighbourhood or sharing encoder passes across hypotheses
+are straightforward speed-ups. Deployments should monitor accepted precision on audited samples.
+
+\section{Conclusion}
+\label{sec:conclusion}
+We reframed OCR verification as asking whether a claim is the locally optimal explanation of its image among
+OCR-plausible counterfactual alternatives, and made the comparison visual with a render-normalised likelihood ratio
+under two frozen recognisers. \ours{}, a relation-aware graph network over counterfactual string graphs, is pretrained
+without human labels and adapts from a handful of labelled words. On a new benchmark of real OCR errors over five public
+datasets it outperforms all general-purpose verifiers in AUROC on every dataset and, against re-recognition with
+state-of-the-art recognisers, is the only verifier close to the best everywhere. Our analyses locate the benefit in the counterfactual evidence and
+label-free pretraining rather than in deep message passing. Future work will extend the confusion model and verifiers
+to non-Latin scripts and make the evidence aware of each dataset's comparison protocol.

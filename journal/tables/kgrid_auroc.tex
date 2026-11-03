@@ -1,0 +1,79 @@
+\begin{table}[p]\centering\caption{FUNSD: auroc as a function of $k$ (labelled words per class). Ensemble of five seeds; subscript: std.\ of single-seed runs.}\label{tab:k_auroc_FUNSD}
+\scriptsize\begin{tabular}{lcccccc}\toprule
+Method & $k$=5 & $k$=10 & $k$=25 & $k$=50 & $k$=100 & full\\\midrule
+Engine MSP conf. & .861 & .861 & .861 & .861 & .861 & .861\\
+ConfidNet-style & .763 & .763 & .845 & .883 & .907 & .935\\
+Flat-LR & \best{.965}$_{.013}$ & \best{.972}$_{.024}$ & \best{.975}$_{.003}$ & .974$_{.005}$ & \second{.975}$_{.006}$ & .977$_{.000}$\\
+CharEv-LR & .943$_{.034}$ & .961$_{.035}$ & .973$_{.003}$ & .972$_{.004}$ & .973$_{.003}$ & .975$_{.000}$\\
+GBDT & .934$_{.060}$ & .952$_{.030}$ & .969$_{.014}$ & .974$_{.005}$ & \second{.975}$_{.006}$ & \second{.979}$_{.001}$\\
+DeepSets & .959$_{.031}$ & .960$_{.056}$ & .971$_{.021}$ & .971$_{.004}$ & .972$_{.004}$ & \second{.979}$_{.002}$\\
+LOCUS-GNN scratch & .954$_{.020}$ & .955$_{.047}$ & .969$_{.010}$ & .968$_{.008}$ & .970$_{.005}$ & \second{.979}$_{.001}$\\
+LOCUS probe & .956$_{.014}$ & \second{.969}$_{.013}$ & \best{.975}$_{.003}$ & \best{.976}$_{.005}$ & \best{.976}$_{.006}$ & \best{.980}$_{.001}$\\
+LOCUS + CV head & .948$_{.005}$ & .966$_{.005}$ & .972$_{.004}$ & \second{.975}$_{.007}$ & \second{.975}$_{.008}$ & \second{.979}$_{.001}$\\
+Priors-only LR & .958$_{.002}$ & .967$_{.002}$ & .966$_{.004}$ & .966$_{.004}$ & .967$_{.002}$ & .968$_{.001}$\\
+\textbf{LOCUS} & \second{.964}$_{.010}$ & .967$_{.011}$ & \second{.974}$_{.004}$ & .972$_{.007}$ & \second{.975}$_{.003}$ & \second{.979}$_{.001}$\\
+\bottomrule\end{tabular}\end{table}
+
+\begin{table}[p]\centering\caption{CORD: auroc as a function of $k$ (labelled words per class). Ensemble of five seeds; subscript: std.\ of single-seed runs.}\label{tab:k_auroc_CORD}
+\scriptsize\begin{tabular}{lcccccc}\toprule
+Method & $k$=5 & $k$=10 & $k$=25 & $k$=50 & $k$=100 & full\\\midrule
+Engine MSP conf. & .892 & .892 & .892 & .892 & .892 & .892\\
+ConfidNet-style & .827 & .907 & .929 & .953 & .964 & .983\\
+Flat-LR & \best{.994}$_{.014}$ & \best{.995}$_{.002}$ & \best{.995}$_{.002}$ & \best{.995}$_{.000}$ & \best{.996}$_{.001}$ & \best{.997}$_{.000}$\\
+CharEv-LR & .985$_{.015}$ & .992$_{.004}$ & .992$_{.001}$ & .993$_{.001}$ & .994$_{.001}$ & \second{.996}$_{.000}$\\
+GBDT & .970$_{.048}$ & .988$_{.022}$ & .988$_{.026}$ & .993$_{.014}$ & \second{.995}$_{.001}$ & \best{.997}$_{.000}$\\
+DeepSets & \second{.992}$_{.025}$ & \best{.995}$_{.004}$ & \second{.994}$_{.004}$ & \best{.995}$_{.000}$ & \second{.995}$_{.001}$ & \best{.997}$_{.000}$\\
+LOCUS-GNN scratch & .987$_{.021}$ & .992$_{.019}$ & .992$_{.015}$ & \best{.995}$_{.001}$ & .994$_{.001}$ & \best{.997}$_{.001}$\\
+LOCUS probe & .983$_{.020}$ & .991$_{.013}$ & .993$_{.013}$ & \second{.994}$_{.001}$ & .994$_{.002}$ & \second{.996}$_{.001}$\\
+LOCUS + CV head & .982$_{.004}$ & .990$_{.008}$ & .993$_{.008}$ & \second{.994}$_{.001}$ & \second{.995}$_{.000}$ & \second{.996}$_{.000}$\\
+Priors-only LR & \best{.994}$_{.000}$ & \second{.994}$_{.000}$ & \second{.994}$_{.000}$ & \second{.994}$_{.000}$ & .994$_{.000}$ & .995$_{.000}$\\
+\textbf{LOCUS} & .989$_{.007}$ & .993$_{.005}$ & .993$_{.006}$ & \second{.994}$_{.001}$ & .993$_{.001}$ & \second{.996}$_{.001}$\\
+\bottomrule\end{tabular}\end{table}
+
+\begin{table}[p]\centering\caption{SROIE: auroc as a function of $k$ (labelled words per class). Ensemble of five seeds; subscript: std.\ of single-seed runs.}\label{tab:k_auroc_SROIE}
+\scriptsize\begin{tabular}{lcccccc}\toprule
+Method & $k$=5 & $k$=10 & $k$=25 & $k$=50 & $k$=100 & full\\\midrule
+Engine MSP conf. & .859 & .859 & .859 & .859 & .859 & .859\\
+ConfidNet-style & .815 & .867 & .912 & .941 & .948 & .974\\
+Flat-LR & .986$_{.010}$ & \second{.991}$_{.003}$ & .990$_{.003}$ & \second{.993}$_{.003}$ & \second{.994}$_{.001}$ & .995$_{.000}$\\
+CharEv-LR & \second{.991}$_{.010}$ & .990$_{.011}$ & .990$_{.004}$ & \best{.994}$_{.002}$ & \best{.995}$_{.001}$ & \second{.996}$_{.000}$\\
+GBDT & .978$_{.017}$ & .986$_{.028}$ & .991$_{.017}$ & \best{.994}$_{.003}$ & \best{.995}$_{.002}$ & \best{.997}$_{.000}$\\
+DeepSets & .983$_{.019}$ & .985$_{.013}$ & \second{.992}$_{.004}$ & \second{.993}$_{.002}$ & .993$_{.001}$ & \second{.996}$_{.000}$\\
+LOCUS-GNN scratch & .970$_{.030}$ & .977$_{.009}$ & .990$_{.005}$ & .992$_{.002}$ & .993$_{.003}$ & .995$_{.000}$\\
+LOCUS probe & \second{.991}$_{.004}$ & \best{.992}$_{.001}$ & \best{.993}$_{.002}$ & \second{.993}$_{.001}$ & \second{.994}$_{.001}$ & \second{.996}$_{.000}$\\
+LOCUS + CV head & .976$_{.004}$ & .986$_{.003}$ & .990$_{.004}$ & \second{.993}$_{.001}$ & .993$_{.001}$ & \second{.996}$_{.000}$\\
+Priors-only LR & \best{.992}$_{.001}$ & \best{.992}$_{.000}$ & \best{.993}$_{.000}$ & \second{.993}$_{.000}$ & .993$_{.000}$ & .993$_{.000}$\\
+\textbf{LOCUS} & .984$_{.011}$ & .989$_{.003}$ & \second{.992}$_{.001}$ & .992$_{.001}$ & .993$_{.000}$ & .995$_{.001}$\\
+\bottomrule\end{tabular}\end{table}
+
+\begin{table}[p]\centering\caption{IAM: auroc as a function of $k$ (labelled words per class). Ensemble of five seeds; subscript: std.\ of single-seed runs.}\label{tab:k_auroc_IAM}
+\scriptsize\begin{tabular}{lcccccc}\toprule
+Method & $k$=5 & $k$=10 & $k$=25 & $k$=50 & $k$=100 & full\\\midrule
+Engine MSP conf. & .878 & .878 & .878 & .878 & .878 & .878\\
+ConfidNet-style & .835 & .849 & .861 & .876 & .894 & .917\\
+Flat-LR & \second{.961}$_{.010}$ & .961$_{.008}$ & \second{.970}$_{.008}$ & .973$_{.006}$ & .976$_{.002}$ & .982$_{.000}$\\
+CharEv-LR & .927$_{.011}$ & .925$_{.011}$ & .959$_{.011}$ & .970$_{.002}$ & .974$_{.003}$ & .978$_{.000}$\\
+GBDT & .929$_{.027}$ & .948$_{.081}$ & .964$_{.012}$ & .973$_{.002}$ & .976$_{.006}$ & \best{.986}$_{.000}$\\
+DeepSets & \best{.969}$_{.012}$ & .960$_{.021}$ & \best{.972}$_{.014}$ & \second{.975}$_{.010}$ & \best{.979}$_{.005}$ & \best{.986}$_{.001}$\\
+LOCUS-GNN scratch & .958$_{.016}$ & .957$_{.014}$ & .969$_{.013}$ & .972$_{.009}$ & .977$_{.008}$ & \best{.986}$_{.001}$\\
+LOCUS probe & .953$_{.014}$ & .957$_{.014}$ & \second{.970}$_{.007}$ & \best{.976}$_{.001}$ & \best{.979}$_{.001}$ & \second{.985}$_{.001}$\\
+LOCUS + CV head & .946$_{.020}$ & .960$_{.022}$ & .969$_{.003}$ & .973$_{.004}$ & \second{.978}$_{.003}$ & \second{.985}$_{.001}$\\
+Priors-only LR & .950$_{.011}$ & \best{.964}$_{.006}$ & .963$_{.005}$ & .965$_{.001}$ & .965$_{.000}$ & .965$_{.000}$\\
+\textbf{LOCUS} & .953$_{.018}$ & \second{.963}$_{.016}$ & .969$_{.007}$ & .974$_{.005}$ & \second{.978}$_{.004}$ & \best{.986}$_{.000}$\\
+\bottomrule\end{tabular}\end{table}
+
+\begin{table}[p]\centering\caption{IIIT5K: auroc as a function of $k$ (labelled words per class). Ensemble of five seeds; subscript: std.\ of single-seed runs.}\label{tab:k_auroc_IIIT5K}
+\scriptsize\begin{tabular}{lcccccc}\toprule
+Method & $k$=5 & $k$=10 & $k$=25 & $k$=50 & $k$=100 & full\\\midrule
+Engine MSP conf. & .938 & .938 & .938 & .938 & .938 & .938\\
+ConfidNet-style & .982 & .981 & .980 & .984 & .985 & .988\\
+Flat-LR & \second{.990}$_{.002}$ & \second{.991}$_{.001}$ & .991$_{.002}$ & .992$_{.002}$ & .993$_{.001}$ & .994$_{.000}$\\
+CharEv-LR & \second{.990}$_{.002}$ & \second{.991}$_{.000}$ & \second{.993}$_{.006}$ & \best{.994}$_{.002}$ & .994$_{.002}$ & \best{.997}$_{.000}$\\
+GBDT & .976$_{.012}$ & .982$_{.012}$ & .990$_{.026}$ & \best{.994}$_{.003}$ & \best{.996}$_{.000}$ & .995$_{.000}$\\
+DeepSets & \second{.990}$_{.003}$ & .988$_{.007}$ & .990$_{.005}$ & \best{.994}$_{.005}$ & \second{.995}$_{.003}$ & .995$_{.001}$\\
+LOCUS-GNN scratch & .987$_{.004}$ & .987$_{.007}$ & .990$_{.002}$ & \best{.994}$_{.001}$ & \second{.995}$_{.001}$ & .995$_{.001}$\\
+LOCUS probe & \best{.991}$_{.002}$ & \best{.992}$_{.001}$ & \second{.993}$_{.001}$ & \second{.993}$_{.001}$ & \second{.995}$_{.002}$ & \second{.996}$_{.000}$\\
+LOCUS + CV head & .984$_{.002}$ & .985$_{.006}$ & \best{.994}$_{.002}$ & \best{.994}$_{.002}$ & \second{.995}$_{.001}$ & .995$_{.001}$\\
+Priors-only LR & \best{.991}$_{.000}$ & \second{.991}$_{.000}$ & .991$_{.000}$ & .991$_{.000}$ & .991$_{.000}$ & .991$_{.001}$\\
+\textbf{LOCUS} & .986$_{.002}$ & .989$_{.002}$ & .991$_{.002}$ & .992$_{.001}$ & .994$_{.002}$ & .995$_{.001}$\\
+\bottomrule\end{tabular}\end{table}

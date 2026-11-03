@@ -1,0 +1,23 @@
+\multicolumn{7}{l}{\emph{Baselines}}\\
+Engine MSP confidence & .144 & .140 & .211 & .203 & .069 & .153 \\
+ConfidNet-style learned conf.~\cite{corbiere2019confidnet} & .126 & .110 & .159 & .203 & .052 & .130 \\
+Two-engine voting & .220 & .170 & .152 & .272 & .076 & .178 \\
+Re-OCR: TrOCR-base~\cite{li2023trocr} & .229 & .154 & .151 & .273 & .058 & .173 \\
+Re-OCR: Florence-2~\cite{xiao2024florence} & .198 & .233 & .377 & .424 & .083 & .263 \\
+Re-OCR: PARSeq~\cite{bautista2022parseq} & .125 & .109 & .246 & .186 & \second{.050} & .143 \\
+Re-OCR: PARSeq, graded & \best{.090} & .099 & .242 & .168 & \best{.049} & .130 \\
+VLM judge: Qwen2.5-VL-7B~\cite{bai2025qwen25vl} & .153 & .127 & .172 & .250 & .056 & .151 \\
+VLM judge, oracle threshold$^\dagger$ & .153 & .127 & .172 & .250 & .056 & .151 \\
+\midrule
+\emph{Best baseline per dataset, chosen in hindsight}$^\ddagger$ & .090 & .099 & .151 & .168 & .049 & .111 \\
+\midrule
+\multicolumn{7}{l}{\emph{Strong learned baselines on our evidence}}\\
+LR on flattened graph evidence & \second{.091} & \best{.096} & \second{.137} & \second{.143} & \second{.050} & \best{.104} \\
+LR on character evidence & .094 & \second{.097} & \second{.137} & .146 & \best{.049} & \second{.105} \\
+GBDT on all evidence & .093 & \best{.096} & \best{.136} & .144 & \best{.049} & \best{.104} \\
+DeepSets over rivals (no edges) & .094 & \second{.097} & \second{.137} & \best{.142} & \best{.049} & \best{.104} \\
+LOCUS-GNN from scratch & .097 & \second{.097} & .138 & .144 & \best{.049} & \second{.105} \\
+\midrule
+\multicolumn{7}{l}{\emph{Ours}}\\
+LOCUS zero-shot (no labels) & .110 & .104 & .152 & .180 & .054 & .120 \\
+LOCUS ($k$-shot) & .092 & .098 & \second{.137} & \second{.143} & \second{.050} & \best{.104} \\

@@ -1,0 +1,107 @@
+% LOCUS overview (Fig. 2), portrait layout. Every string, image and number is real: FUNSD test word
+% FUNSD_test_02881 (truth THE, Tesseract claim TRE, conf. 0.94); evidence from data/FUNSD/locus2_tess.pt;
+% verdict/repair from results/preds_FUNSD.npy and repair_FUNSD_k0.npy; pretraining pair FUNSD_train_07088.
+\begin{tikzpicture}[
+  font=\small, >=stealth, line cap=round,
+  box/.style={draw=#1!60!black, rounded corners=3pt, align=center, inner sep=3.5pt, fill=#1!8, line width=0.6pt},
+  box/.default=gray,
+  hyp/.style={draw, rounded corners=7pt, inner sep=2.5pt, minimum height=14pt, minimum width=22pt, font=\small\ttfamily, fill=white, line width=0.6pt},
+  stage/.style={font=\small\bfseries, anchor=west},
+  note/.style={font=\footnotesize, align=center, text=black!70},
+  lbl/.style={font=\scriptsize\itshape, fill=white, inner sep=0.6pt, text=black!75},
+  flow/.style={->, line width=1.0pt, black!70},
+  band/.style={rounded corners=6pt, fill=#1!4, draw=#1!25, line width=0.5pt},
+]
+% ---------------------------------------------------------------- bands (canvas 13.6 x 17.75)
+\fill[band=blue]   (0,4.1) rectangle (13.6,17.1);
+\fill[band=orange] (0,-0.95) rectangle (13.6,3.9);
+\node[anchor=west, font=\normalsize\bfseries, text=blue!50!black] at (0.15,16.75) {Inference: is the claim the best explanation of the image among its rivals?};
+\node[anchor=west, font=\normalsize\bfseries, text=orange!50!black] at (0.15,3.55) {Training: label-free pretraining, then a few labelled words};
+
+% ================================================================ (a) input
+\node[stage] at (0.15,16.2) {(a) Black-box OCR};
+\node[draw=black!40, inner sep=2pt, fill=white] (img) at (1.6,15.3) {\includegraphics[height=0.75cm]{figs/f2_crop.png}};
+\node[note, anchor=north] (imgl) at (img.south) {word crop $x$};
+\node[box] (eng) at (1.6,13.45) {OCR engine\\{\footnotesize (Tesseract)}};
+\node[box=red, font=\normalsize\ttfamily] (claim) at (1.6,12.05) {TRE};
+\node[note, anchor=north] at (claim.south) {claim $h$, conf.\ 0.94\\\textcolor{red!70!black}{threshold accepts}};
+\draw[flow] (imgl.south) -- node[lbl, right, xshift=1pt]{read} (eng.north);
+\draw[flow] (eng.south) -- node[lbl, right, xshift=1pt]{output} (claim.north);
+
+% ================================================================ (b) counterfactual string graph
+\node[stage] at (3.85,16.2) {(b) Counterfactual string graph $G(h)$};
+\node[hyp, draw=red!70!black, fill=red!10, font=\normalsize\ttfamily] (h0) at (8.75,13.55) {TRE};
+\node[hyp, draw=green!50!black, fill=green!12, font=\normalsize\ttfamily] (g) at (8.75,15.35) {THE};
+\node[hyp] (te)   at (6.3,14.8)  {TE};
+\node[hyp] (tre2) at (11.2,14.8) {TRe};
+\node[hyp] (re)   at (5.95,13.05) {RE};
+\node[hyp] (tre)  at (12.45,13.15) {tRE};
+\node[hyp] (sev)  at (6.9,11.85) {7RE};
+\node[hyp] (tr)   at (10.6,11.85) {TR};
+\draw[-, line width=0.9pt, green!50!black] (h0) -- node[lbl]{reading $g_1{=}g_2$} (g);
+\foreach \n/\l in {te/delete,tre2/case,re/delete,tre/case,sev/confusable,tr/delete}
+  \draw[-, line width=0.8pt, black!45] (h0) -- node[lbl, pos=0.45]{\l} (\n);
+\draw[-, dashed, line width=0.9pt, blue!60] (re) to[bend right=30] node[lbl, pos=0.5, left]{sibling} (sev);
+\draw[-, dashed, line width=0.9pt, blue!60] (tre2) to[bend left=12] (tr);
+\node[note] at (8.6,11.15) {nodes: strings; edges: edit operations; dashed: same-glyph rivals};
+\coordinate (bus) at (3.45,0);
+\draw[line width=1.0pt, black!70] (img.east) -- (img.east -| bus) -- (h0.west -| bus);
+\draw[line width=1.0pt, black!70] (claim.east) -- (claim.east -| bus) -- (h0.west -| bus);
+\fill[black!70] (h0.west -| bus) circle (1.6pt);
+\draw[flow] (h0.west -| bus) -- node[lbl, above, pos=0.45]{$x$ and $h$} (h0.west);
+
+% ================================================================ (c) render-normalised evidence
+\node[stage] at (0.15,10.55) {(c) Render-normalised evidence};
+\node[note, anchor=west] at (0.3,10.05) {$\rho_V(v)=s_V(v\mid x)-s_V\big(v\mid R(v)\big)$, two frozen verifiers $V_1$=TrOCR, $V_2$=PARSeq};
+\node[font=\footnotesize\bfseries] at (0.95,9.55) {$v$};
+\node[font=\footnotesize\bfseries] at (2.5,9.55) {$R(v)$};
+\node[font=\footnotesize\bfseries] at (4.3,9.55) {$s_{V_1}(v\mid x)$};
+\node[font=\footnotesize\bfseries] at (5.85,9.55) {$\rho_{V_1}$};
+\node[font=\footnotesize\bfseries] at (7.05,9.55) {$\rho_{V_2}$};
+\draw[black!40] (0.3,9.3) -- (9.5,9.3);
+\newcommand{\evrow}[7]{%
+  \node[font=\small\ttfamily, text=#7] at (0.95,#1) {#2};
+  \node[draw=black!25, inner sep=1pt, fill=white] at (2.5,#1) {\includegraphics[height=0.36cm]{figs/f2_r_#2.png}};
+  \node[font=\small, text=#7] at (4.3,#1) {#3};
+  \node[font=\small\bfseries, text=#7] at (5.85,#1) {#4};
+  \node[font=\small\bfseries, text=#7] at (7.05,#1) {#5};
+  \node[font=\scriptsize, text=black!60, anchor=west] at (7.75,#1) {#6};}
+\evrow{8.95}{THE}{0.0}{0.0}{0.0}{truth: best}{green!40!black}
+\evrow{8.4}{TRE}{$-$16.6}{$-$16.6}{$-$11.1}{claim}{red!70!black}
+\evrow{7.85}{TE}{$-$16.1}{$-$16.1}{$-$13.7}{}{black}
+\evrow{7.3}{TRe}{$-$28.9}{$-$15.1}{$-$20.6}{prior removed}{black}
+\draw[black!40] (0.3,7.0) -- (9.5,7.0);
+\node[box=blue, anchor=west, text width=3.3cm, font=\footnotesize, align=left] at (9.8,8.15) {Truth: $\rho\!\approx\!0$, as good as its own rendering; the claim is far worse. The rendering term removes the string prior (\texttt{TRe}: $-28.9\rightarrow-15.1$).};
+
+% ================================================================ (d) network and (e) output
+\node[stage] at (0.15,6.6) {(d) LOCUS network};
+\node[box=orange, text width=3.3cm, font=\footnotesize] (n1) at (2.0,5.95) {node features: $2{\times}11$\\evidence + edit type};
+\node[box=orange, text width=2.7cm, font=\footnotesize] (n2) at (5.85,5.95) {$3{\times}$ GATv2 layers,\\edge type = edit};
+\node[box=orange, text width=2.9cm, font=\footnotesize] (n3) at (9.6,5.95) {pool claim + rivals\\$+\,\beta\log P_{\mathrm{opt}}(h)$};
+\draw[flow] (n1) -- (n2); \draw[flow] (n2) -- (n3);
+\node[stage] at (0.15,4.55) {(e) Measured output};
+\node[box=red, font=\footnotesize, text width=2.7cm] (ver) at (8.2,4.55) {verdict: \textbf{Incorrect}\\$P(\text{correct})=0.00$};
+\node[box=green, font=\footnotesize, text width=2.7cm] (rep) at (11.6,4.55) {repair: \textbf{\texttt{THE}}\\(= ground truth)};
+\coordinate (split) at ($(n3.south)+(0,-0.3)$);
+\draw[line width=1.0pt, black!70] (n3.south) -- (split);
+\draw[flow] (split) -| (ver.north);
+\draw[flow] (split) -| (rep.north);
+
+% ================================================================ (f) pretraining
+\node[stage] at (0.15,3.0) {(f) Label-free pretraining (no human labels)};
+\node[draw=black!40, inner sep=2pt, fill=white] (pimg) at (1.35,1.95) {\includegraphics[height=0.5cm]{figs/f2_pre.png}};
+\node[note, anchor=north] at (pimg.south) {unlabelled crop};
+\node[box, text width=2.7cm, font=\footnotesize] (agree) at (4.55,1.95) {two engines agree\\(Tesseract = TrOCR-s)};
+\node[box=green, font=\footnotesize] (pc) at (8.15,2.55) {\texttt{INDOOR}\ \ $\tilde y{=}1$};
+\node[box=red, font=\footnotesize, text width=3.0cm] (pn) at (8.15,1.45) {\texttt{INDOOr}\ \ $\tilde y{=}0$\\{\scriptsize corrupted, repair known}};
+\node[box=orange, text width=2.2cm, font=\footnotesize] (loss) at (11.85,1.95) {BCE$(P,\tilde y)$\\$-\lambda\log P_{\mathrm{opt}}$};
+\draw[flow] (pimg) -- (agree); \draw[flow] (agree.east) -- (pc.west); \draw[flow] (agree.east) -- (pn.west);
+\draw[flow] (pc.east) -- (loss); \draw[flow] (pn.east) -- (loss);
+
+% ================================================================ (g) few-shot
+\node[stage] at (0.15,-0.25) {(g) Few-shot adaptation};
+\node[box, text width=3.0cm, font=\footnotesize] (few) at (6.0,-0.3) {$k$ labelled words per class ($k$=5\,\ldots\,100)};
+\node[box=orange, text width=3.3cm, font=\footnotesize] (ft) at (10.8,-0.3) {fine-tune 300 steps, no validation labels};
+\draw[flow] (loss.south) -- (11.85,0.6) -| (few.north);
+\draw[flow] (few) -- (ft);
+\end{tikzpicture}

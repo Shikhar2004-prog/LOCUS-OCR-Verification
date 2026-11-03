@@ -1,0 +1,95 @@
+% LOCUS: journal manuscript in the IRO Journals template (12pt, A4, one-and-a-half spacing, Times).
+% Build:  pdflatex locus_journal (named / camera-ready)   or   pdflatex locus_journal_anonymous (double-blind copy).
+\documentclass[12pt,twoside]{article}
+\usepackage{geometry}
+\usepackage[shortlabels]{enumitem}
+\setlist{nosep}
+\setlist[enumerate]{wide=0pt, widest=99,leftmargin=25pt, labelsep=*}
+\usepackage[none]{hyphenat}
+\usepackage{graphicx}
+\graphicspath{ {./} }
+\usepackage{titlesec}
+\usepackage{booktabs}
+\usepackage{mathptmx}
+\usepackage{setspace}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1em}
+\sloppy
+\usepackage{array}
+\newcolumntype{P}[1]{>{\centering\arraybackslash}p{#1}}
+\newcolumntype{M}[1]{>{\centering\arraybackslash}m{#1}}
+\titleformat{\section}{\normalfont\fontsize{12}{12}\bfseries}{\thesection.}{12pt}{}
+\titlespacing*{\section}{0pt}{12pt plus 2pt minus 2pt}{0pt}
+\titleformat{\subsection}{\normalfont\fontsize{12}{12}\bfseries}{\thesubsection}{12pt}{}
+\titlespacing*{\subsection}{0pt}{10pt plus 2pt minus 2pt}{0pt}
+\geometry{a4paper, total={170mm,257mm}, left=2.54cm, top=2.65cm, right=2.54cm, bottom=2.65cm}
+\rmfamily
+\usepackage{fancyhdr}
+\renewcommand{\footrulewidth}{0 pt}
+\renewcommand{\headrulewidth}{0 pt}
+% ---------------------------------------------------------------- additions needed by the content
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb,multirow,xcolor,colortbl,tikz,microtype}
+\usetikzlibrary{positioning,calc}
+\usepackage[font=small,labelfont=bf,labelsep=period,skip=4pt]{caption}
+\captionsetup[figure]{name=Figure}
+\DeclareCaptionType[fileext=loa]{algo}[Algorithm][List of Algorithms]
+\usepackage[numbers,square,sort&compress]{natbib}
+\usepackage{placeins}
+\usepackage[hidelinks]{hyperref}
+\setlength{\textfloatsep}{8pt plus 2pt minus 2pt}
+\setlength{\floatsep}{8pt plus 2pt minus 2pt}
+\setlength{\intextsep}{8pt plus 2pt minus 2pt}
+\renewcommand{\topfraction}{0.95}\renewcommand{\bottomfraction}{0.8}
+\renewcommand{\textfraction}{0.05}\renewcommand{\floatpagefraction}{0.85}
+\setcounter{topnumber}{4}\setcounter{bottomnumber}{3}\setcounter{totalnumber}{6}
+\newcommand{\ours}{\textsc{LOCUS}}
+\definecolor{bestc}{RGB}{200,235,200}\definecolor{secondc}{RGB}{210,225,248}
+\newcommand{\best}[1]{\cellcolor{bestc}\textbf{#1}}
+\newcommand{\second}[1]{\cellcolor{secondc}\underline{#1}}
+\makeatletter\newcommand{\tabinput}[1]{\@@input #1 }\makeatother
+\newcommand{\keywords}[1]{\par\textbf{\fontsize{12}{12}\selectfont Keywords:} #1}
+\input{numbers}
+\input{sentences}
+\expandafter\ifx\csname ifanon\endcsname\relax\expandafter\let\csname ifanon\expandafter\endcsname\csname iffalse\endcsname\fi % anonymous wrapper sets \ifanon=\iftrue
+
+\begin{document}
+\begin{singlespace}
+\begin{center}
+\fontsize{24}{28}\selectfont\textbf{LOCUS: Verifying OCR by Local Optimality over Counterfactual String Graphs}
+\end{center}
+\vspace{18pt}
+\ifanon
+\fontsize{16}{16}\selectfont\textbf{Anonymous Author(s)}\vspace{16pt}\\
+\fontsize{11}{11}\selectfont{Affiliation withheld for double-blind review}\vspace{16pt}\\
+{\fontsize{9}{9}\selectfont\textbf{E-mail:} withheld}\\
+\else
+\fontsize{16}{16}\selectfont\textbf{Shikhar Dubey$^{1,\ast,\dagger}$, Sanhita Saxena$^{2,\ast}$}
+\vspace{16pt}\\
+\fontsize{11}{11}\selectfont{%
+$^1$Intelligent Systems, School of Computing and Electrical Engineering, Indian Institute of Technology Mandi, Himachal Pradesh, India\\
+$^2$School of Mathematical and Statistical Sciences, Indian Institute of Technology Mandi, Himachal Pradesh, India\\
+$^\ast$These authors contributed equally to this work. \quad $^\dagger$Corresponding author.}\vspace{16pt}\\
+{\fontsize{9}{9}\selectfont\textbf{E-mail:} $^1$s24130@students.iitmandi.ac.in, $^2$s25008@students.iitmandi.ac.in}\\
+\fi
+\end{singlespace}
+\fontsize{12}{12}\selectfont
+\begin{onehalfspace}
+\input{j_abstract}
+\input{j_intro}
+\input{j_related}
+\input{j_method}
+\input{j_setup}
+\input{j_results}
+\input{j_analysis}
+\input{j_qual}
+\input{j_discussion}
+\FloatBarrier
+\input{j_declarations}
+\input{j_references}
+\ifanon\else\input{j_bios}\fi
+\clearpage
+\appendix
+\input{j_appendix}
+\end{onehalfspace}
+\end{document}

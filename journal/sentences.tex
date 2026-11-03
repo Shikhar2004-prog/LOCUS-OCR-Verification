@@ -1,0 +1,63 @@
+% Result-dependent sentences. Every number below is copied from the generated tables
+% (tables/main_*_k25.tex, review_cost.tex, significance.tex, recog_*.tex, mp_analysis.tex,
+% font_sensitivity.tex, char_error_subset.tex, audit.tex) after all runs finished.
+\newcommand{\SROIESENTENCE}{On held-out SROIE the ranking of baselines flips: TrOCR's printed checkpoints were
+fine-tuned on SROIE receipts, so TrOCR re-recognition is strong (.979 macro-F1) while PARSeq agreement fails on these
+long receipt lines (.742); \ours{} is slightly below the former in macro-F1 (.973) and above it in AUROC (.992 vs.\ .978,
+Table~\ref{tab:significance}). No single re-recognition baseline is the best choice on every dataset (PARSeq on forms
+and scene text, TrOCR on SROIE, neither on handwriting), whereas \ours{} is within 0.006 macro-F1 of the best baseline
+or better on four of the five datasets. Its average macro-F1 (.954) is the highest of all methods in
+Table~\ref{tab:main}: well above the best single baseline (.907, PARSeq), equal to choosing the best baseline separately
+for every dataset in hindsight (.954), and marginally above simple learners trained on our own counterfactual evidence
+(.939--.952).}
+\newcommand{\REVIEWSENTENCE}{At 95\% accepted precision, \ours{} requires reviewing 44.7\% of SROIE lines (TrOCR
+re-recognition 45.0\%, PARSeq 69.5\%, the VLM judge 76.2\%, engine confidence 90.9\%) and 51.4\% of IAM words (PARSeq
+54.6\%, the VLM judge 94.8\%). On FUNSD, CORD and IIIT5K, \ours{} and PARSeq are within two points of each other (FUNSD
+37.2\% vs.\ 35.4\%, CORD 37.4\% vs.\ 38.6\%, IIIT5K 25.6\% vs.\ 25.3\%), while engine confidence and the VLM judge require
+1.6--2.3$\times$ more review than \ours{} on the three receipt and form datasets. At the strictest target (98\%) PARSeq
+is better on FUNSD and IAM.}
+\newcommand{\XDSSENTENCE}{The ranking transfers well across all twenty dataset pairs (AUROC .892--.995;
+e.g.\ FUNSD$\rightarrow$CORD .995 vs.\ .996 in-domain, CORD$\rightarrow$FUNSD .968 vs.\ .979). The weakest transfers are
+those \emph{to} handwriting (SROIE$\rightarrow$IAM .892, CORD$\rightarrow$IAM .954) and from receipt lines to forms
+(SROIE$\rightarrow$FUNSD .941). As for engines, macro-F1 at the fixed 0.5 threshold transfers much less well than the
+ranking (e.g.\ SROIE$\rightarrow$FUNSD .620).}
+\newcommand{\SIGSENTENCE}{Against the strongest baseline, \ours{} is significantly better on IAM in both metrics
+($\Delta$AUROC $+0.055$, $\Delta$F1 $+0.026$, $p<0.001$), better in AUROC on CORD at the document level ($+0.007$,
+$p=0.023$; macro-F1 $+0.005$, not significant) and on SROIE ($+0.014$, $p<0.001$, while TrOCR re-recognition is
+slightly better in macro-F1, $-0.006$, $p=0.002$); it is statistically tied with PARSeq on FUNSD at the document level
+($p=0.25$ and $p=0.12$) and significantly worse than PARSeq on IIIT5K ($-0.004$ AUROC, $-0.021$ macro-F1). It is
+significantly better than the VLM judge and than TrOCR re-recognition on every dataset except SROIE, where the latter is
+in-domain.}
+\newcommand{\MPSENTENCE}{Three observations explain the null effect of message passing. First, removing message
+passing changes neither metric by more than 0.009 on any dataset (A vs.\ B). Second, the \emph{explicit} comparison of each
+rival with the claim does matter: removing the claim-relative features costs 0.010 to 0.023 macro-F1 on CORD, SROIE and
+IIIT5K (A vs.\ C), and adding message passing back does not recover it (C vs.\ D). The network is not learning the
+comparison from the graph; it uses the comparison when it is computed for it. Third, the graph is a depth-one star whose
+readout already pools over every rival, so a message-passing layer can only re-express information the readout sees
+anyway. Removing the rivals entirely (E) costs ranking quality on FUNSD (AUROC .974 to .961) but little elsewhere,
+because the claim node keeps its own evidence and its agreement with both verifiers' readings, which summarise what the
+strongest rivals would say. In short, what helps is counterfactual \emph{evidence}: scoring the claim against
+alternatives under prior-cancelled likelihoods and making the comparison explicit; the graph is a convenient container
+for it, not the source of the gain.}
+\newcommand{\FONTSENTENCE}{The trained model is insensitive to the rendering: across seven
+renderings its macro-F1 varies by at most 0.005 on every dataset (FUNSD .937--.939, CORD .972--.977, IAM .919--.923), and
+the AUROC of the claim's ratio alone by at most 0.011. The training-free rule is more sensitive (AUROC .920--.940 on FUNSD,
+.919--.944 on IAM); it is best with a serif or monospaced font rather than our default sans-serif, which we did not tune, and
+a handwriting-like font does not help on handwriting. A mismatched rendering is thus absorbed by learning; only the
+label-free rule would benefit from choosing the font.}
+\newcommand{\CHARSENTENCE}{The removed share is large on FUNSD (51\% of errors) and moderate on CORD, SROIE and IAM
+(18--23\%); IIIT5K's canonical protocol already excludes such differences. \ours{}' AUROC changes by at most 0.011
+(it rises slightly or is unchanged), and its ordering relative to the baselines is unchanged except that the VLM judge,
+whose AUROC rises most (FUNSD .846 to .928, SROIE .941 to .982), is visibly penalised by these artefacts. The conclusions of
+Sec.~\ref{sec:main_results} therefore do not rest on annotation conventions.}
+\newcommand{\AUDITSENTENCE}{Two conclusions follow. First, fewer than half of \ours{}' apparent
+mistakes are genuine verification errors on a correct label (42 of 100 sampled): 25 are label noise, 9 crop problems and
+8 ambiguous, and on IIIT5K 16 of 20 are claims that count as correct only after the case-insensitive, punctuation-free
+normalisation of the protocol (\emph{e.g.}\ \texttt{HoLLywooD} for an upper-case sign), which \ours{}, judging the exact
+appearance of the string, rejects; this protocol mismatch, rather than a visual error, explains most of \ours{}' gap to
+PARSeq agreement (which compares normalised strings) on IIIT5K. Second, the stratum ``errors that PARSeq agrees with''
+consists mostly of cases where the claim matches what is visible: only 10 of 92 sampled words are genuine errors, against
+46 label-noise and 21 crop problems, so low rejection rates there are not a weakness of either verifier. The genuine
+failures that remain fall into two identifiable modes: rejecting correct short or case-ambiguous claims when PARSeq reads
+another case (CORD: \texttt{Rp}, \texttt{x}, \texttt{Pop}), and accepting capitalisation errors in handwriting (IAM:
+\texttt{pinkie}, \texttt{market}, \texttt{church}).}

@@ -1,0 +1,79 @@
+\begin{table}[p]\centering\caption{FUNSD: aurc as a function of $k$ (labelled words per class). Ensemble of five seeds; subscript: std.\ of single-seed runs.}\label{tab:k_aurc_FUNSD}
+\scriptsize\begin{tabular}{lcccccc}\toprule
+Method & $k$=5 & $k$=10 & $k$=25 & $k$=50 & $k$=100 & full\\\midrule
+Engine MSP conf. & .144 & .144 & .144 & .144 & .144 & .144\\
+ConfidNet-style & .217 & .220 & .164 & .143 & .126 & .109\\
+Flat-LR & \second{.099}$_{.010}$ & \best{.095}$_{.015}$ & \best{.092}$_{.003}$ & \best{.093}$_{.004}$ & \best{.091}$_{.005}$ & .091$_{.000}$\\
+CharEv-LR & .108$_{.015}$ & .098$_{.015}$ & .094$_{.003}$ & .095$_{.003}$ & .094$_{.003}$ & .094$_{.000}$\\
+GBDT & .112$_{.038}$ & .104$_{.012}$ & .098$_{.005}$ & \second{.094}$_{.005}$ & .093$_{.005}$ & \best{.089}$_{.000}$\\
+DeepSets & .104$_{.018}$ & .104$_{.036}$ & .094$_{.010}$ & .095$_{.004}$ & .094$_{.003}$ & \second{.090}$_{.002}$\\
+LOCUS-GNN scratch & .106$_{.009}$ & .105$_{.024}$ & .095$_{.005}$ & .098$_{.007}$ & .097$_{.003}$ & \second{.090}$_{.000}$\\
+LOCUS probe & .103$_{.010}$ & \second{.097}$_{.009}$ & \second{.093}$_{.002}$ & \best{.093}$_{.004}$ & \best{.091}$_{.005}$ & .091$_{.001}$\\
+LOCUS + CV head & .113$_{.006}$ & .099$_{.006}$ & .094$_{.005}$ & \best{.093}$_{.005}$ & \second{.092}$_{.006}$ & .091$_{.001}$\\
+Priors-only LR & .105$_{.001}$ & .101$_{.001}$ & .101$_{.003}$ & .101$_{.003}$ & .100$_{.001}$ & .100$_{.001}$\\
+\textbf{LOCUS} & \best{.098}$_{.007}$ & \second{.097}$_{.007}$ & \best{.092}$_{.002}$ & \best{.093}$_{.005}$ & \second{.092}$_{.002}$ & .091$_{.001}$\\
+\bottomrule\end{tabular}\end{table}
+
+\begin{table}[p]\centering\caption{CORD: aurc as a function of $k$ (labelled words per class). Ensemble of five seeds; subscript: std.\ of single-seed runs.}\label{tab:k_aurc_CORD}
+\scriptsize\begin{tabular}{lcccccc}\toprule
+Method & $k$=5 & $k$=10 & $k$=25 & $k$=50 & $k$=100 & full\\\midrule
+Engine MSP conf. & .140 & .140 & .140 & .140 & .140 & .140\\
+ConfidNet-style & .182 & .135 & .124 & .115 & .110 & .101\\
+Flat-LR & \second{.098}$_{.009}$ & \best{.096}$_{.001}$ & \best{.096}$_{.001}$ & \best{.096}$_{.000}$ & \best{.096}$_{.000}$ & \second{.095}$_{.000}$\\
+CharEv-LR & .101$_{.006}$ & .098$_{.001}$ & .098$_{.001}$ & .098$_{.001}$ & \second{.097}$_{.000}$ & .096$_{.000}$\\
+GBDT & .111$_{.013}$ & .100$_{.023}$ & .100$_{.024}$ & .098$_{.008}$ & \best{.096}$_{.001}$ & \second{.095}$_{.001}$\\
+DeepSets & .099$_{.014}$ & \second{.097}$_{.002}$ & \second{.097}$_{.003}$ & \best{.096}$_{.000}$ & \second{.097}$_{.001}$ & \best{.094}$_{.000}$\\
+LOCUS-GNN scratch & .100$_{.012}$ & .098$_{.011}$ & .098$_{.008}$ & \second{.097}$_{.001}$ & \second{.097}$_{.002}$ & \second{.095}$_{.001}$\\
+LOCUS probe & .103$_{.010}$ & .099$_{.006}$ & .099$_{.007}$ & .098$_{.000}$ & .098$_{.002}$ & .096$_{.000}$\\
+LOCUS + CV head & .101$_{.002}$ & .098$_{.004}$ & \second{.097}$_{.004}$ & \second{.097}$_{.000}$ & \second{.097}$_{.000}$ & .096$_{.000}$\\
+Priors-only LR & \best{.097}$_{.000}$ & \second{.097}$_{.000}$ & \second{.097}$_{.000}$ & \second{.097}$_{.000}$ & \second{.097}$_{.000}$ & .097$_{.000}$\\
+\textbf{LOCUS} & \second{.098}$_{.004}$ & \second{.097}$_{.003}$ & \second{.097}$_{.003}$ & \second{.097}$_{.001}$ & .098$_{.001}$ & .096$_{.001}$\\
+\bottomrule\end{tabular}\end{table}
+
+\begin{table}[p]\centering\caption{SROIE: aurc as a function of $k$ (labelled words per class). Ensemble of five seeds; subscript: std.\ of single-seed runs.}\label{tab:k_aurc_SROIE}
+\scriptsize\begin{tabular}{lcccccc}\toprule
+Method & $k$=5 & $k$=10 & $k$=25 & $k$=50 & $k$=100 & full\\\midrule
+Engine MSP conf. & .211 & .211 & .211 & .211 & .211 & .211\\
+ConfidNet-style & .257 & .217 & .184 & .163 & .159 & .146\\
+Flat-LR & .141$_{.009}$ & \second{.139}$_{.002}$ & \second{.139}$_{.001}$ & \second{.138}$_{.001}$ & \second{.137}$_{.000}$ & \second{.136}$_{.000}$\\
+CharEv-LR & \second{.139}$_{.005}$ & \second{.139}$_{.005}$ & \second{.139}$_{.002}$ & \best{.137}$_{.001}$ & \second{.137}$_{.001}$ & \second{.136}$_{.000}$\\
+GBDT & .154$_{.009}$ & .146$_{.018}$ & \best{.138}$_{.014}$ & \second{.138}$_{.003}$ & \best{.136}$_{.002}$ & \best{.135}$_{.000}$\\
+DeepSets & .143$_{.015}$ & .142$_{.012}$ & \best{.138}$_{.002}$ & \second{.138}$_{.001}$ & \second{.137}$_{.000}$ & \second{.136}$_{.000}$\\
+LOCUS-GNN scratch & .150$_{.022}$ & .148$_{.007}$ & \second{.139}$_{.004}$ & .139$_{.002}$ & .138$_{.004}$ & \second{.136}$_{.000}$\\
+LOCUS probe & \second{.139}$_{.002}$ & \best{.138}$_{.000}$ & \best{.138}$_{.001}$ & \second{.138}$_{.000}$ & \second{.137}$_{.000}$ & \second{.136}$_{.000}$\\
+LOCUS + CV head & .148$_{.002}$ & .142$_{.002}$ & \second{.139}$_{.002}$ & \second{.138}$_{.000}$ & .138$_{.000}$ & \second{.136}$_{.000}$\\
+Priors-only LR & \best{.138}$_{.000}$ & \best{.138}$_{.000}$ & \best{.138}$_{.000}$ & \second{.138}$_{.000}$ & .138$_{.000}$ & .138$_{.000}$\\
+\textbf{LOCUS} & .144$_{.006}$ & .140$_{.002}$ & \second{.139}$_{.001}$ & \second{.138}$_{.001}$ & \second{.137}$_{.000}$ & \second{.136}$_{.000}$\\
+\bottomrule\end{tabular}\end{table}
+
+\begin{table}[p]\centering\caption{IAM: aurc as a function of $k$ (labelled words per class). Ensemble of five seeds; subscript: std.\ of single-seed runs.}\label{tab:k_aurc_IAM}
+\scriptsize\begin{tabular}{lcccccc}\toprule
+Method & $k$=5 & $k$=10 & $k$=25 & $k$=50 & $k$=100 & full\\\midrule
+Engine MSP conf. & .203 & .203 & .203 & .203 & .203 & .203\\
+ConfidNet-style & .249 & .244 & .226 & .214 & .203 & .187\\
+Flat-LR & \second{.150}$_{.006}$ & \second{.150}$_{.004}$ & \best{.146}$_{.004}$ & \best{.144}$_{.004}$ & \second{.143}$_{.001}$ & .141$_{.000}$\\
+CharEv-LR & .167$_{.006}$ & .168$_{.006}$ & .152$_{.005}$ & .147$_{.001}$ & .146$_{.002}$ & .143$_{.000}$\\
+GBDT & .165$_{.031}$ & .156$_{.063}$ & .150$_{.006}$ & .146$_{.001}$ & .144$_{.003}$ & \best{.138}$_{.000}$\\
+DeepSets & \best{.147}$_{.008}$ & .154$_{.013}$ & \second{.147}$_{.011}$ & \best{.144}$_{.007}$ & \best{.142}$_{.003}$ & \best{.138}$_{.000}$\\
+LOCUS-GNN scratch & .154$_{.014}$ & .155$_{.010}$ & .149$_{.008}$ & \second{.145}$_{.005}$ & .144$_{.005}$ & \best{.138}$_{.001}$\\
+LOCUS probe & .155$_{.008}$ & .154$_{.007}$ & .148$_{.003}$ & \best{.144}$_{.001}$ & \best{.142}$_{.002}$ & \second{.139}$_{.001}$\\
+LOCUS + CV head & .158$_{.011}$ & .151$_{.011}$ & \best{.146}$_{.002}$ & \best{.144}$_{.002}$ & \best{.142}$_{.002}$ & \second{.139}$_{.000}$\\
+Priors-only LR & .156$_{.006}$ & \best{.149}$_{.004}$ & .149$_{.003}$ & .148$_{.001}$ & .148$_{.000}$ & .148$_{.000}$\\
+\textbf{LOCUS} & .155$_{.009}$ & \second{.150}$_{.009}$ & .149$_{.005}$ & \second{.145}$_{.003}$ & \second{.143}$_{.003}$ & \best{.138}$_{.000}$\\
+\bottomrule\end{tabular}\end{table}
+
+\begin{table}[p]\centering\caption{IIIT5K: aurc as a function of $k$ (labelled words per class). Ensemble of five seeds; subscript: std.\ of single-seed runs.}\label{tab:k_aurc_IIIT5K}
+\scriptsize\begin{tabular}{lcccccc}\toprule
+Method & $k$=5 & $k$=10 & $k$=25 & $k$=50 & $k$=100 & full\\\midrule
+Engine MSP conf. & .069 & .069 & .069 & .069 & .069 & .069\\
+ConfidNet-style & .053 & .054 & .054 & .053 & .052 & .052\\
+Flat-LR & \second{.052}$_{.002}$ & \second{.052}$_{.001}$ & .052$_{.001}$ & .051$_{.001}$ & \second{.050}$_{.001}$ & .050$_{.000}$\\
+CharEv-LR & \second{.052}$_{.001}$ & \best{.051}$_{.000}$ & \second{.050}$_{.001}$ & \best{.049}$_{.001}$ & \best{.049}$_{.001}$ & \best{.048}$_{.000}$\\
+GBDT & .056$_{.008}$ & .054$_{.009}$ & .052$_{.013}$ & \second{.050}$_{.001}$ & \best{.049}$_{.001}$ & .050$_{.001}$\\
+DeepSets & \best{.051}$_{.001}$ & \second{.052}$_{.002}$ & .052$_{.002}$ & \second{.050}$_{.002}$ & \best{.049}$_{.001}$ & \second{.049}$_{.000}$\\
+LOCUS-GNN scratch & \second{.052}$_{.001}$ & \second{.052}$_{.002}$ & .052$_{.001}$ & \second{.050}$_{.001}$ & \best{.049}$_{.001}$ & \second{.049}$_{.000}$\\
+LOCUS probe & \second{.052}$_{.001}$ & \second{.052}$_{.001}$ & .051$_{.001}$ & \second{.050}$_{.001}$ & \best{.049}$_{.001}$ & \second{.049}$_{.000}$\\
+LOCUS + CV head & .055$_{.001}$ & .053$_{.003}$ & \best{.049}$_{.001}$ & \second{.050}$_{.002}$ & \best{.049}$_{.001}$ & \second{.049}$_{.000}$\\
+Priors-only LR & \second{.052}$_{.000}$ & \second{.052}$_{.000}$ & .052$_{.000}$ & .052$_{.000}$ & .052$_{.000}$ & .052$_{.000}$\\
+\textbf{LOCUS} & .054$_{.001}$ & \second{.052}$_{.000}$ & .052$_{.001}$ & \second{.050}$_{.001}$ & \second{.050}$_{.001}$ & .050$_{.001}$\\
+\bottomrule\end{tabular}\end{table}

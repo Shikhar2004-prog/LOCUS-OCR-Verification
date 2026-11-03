@@ -1,0 +1,23 @@
+\section*{\fontsize{12}{12}\selectfont\textbf{Author's biography}}
+% bios/saxena.jpg: LinkedIn profile photo; bios/dubey.jpg: cropped from pic_shikhar.jpeg.
+\newcommand{\bio}[3]{%
+\noindent\begin{minipage}[t]{0.13\linewidth}\vspace{0pt}%
+\IfFileExists{#1}{\includegraphics[width=\linewidth,height=1.25\linewidth,keepaspectratio]{#1}}%
+{\fbox{\parbox[c][1.2\linewidth][c]{0.8\linewidth}{\centering\footnotesize photo}}}%
+\end{minipage}\hfill
+\begin{minipage}[t]{0.84\linewidth}\vspace{0pt}\footnotesize\textbf{#2} #3\end{minipage}\par\vspace{6pt}}
+
+\bio{bios/dubey.jpg}{Shikhar Dubey}{is a researcher in the Intelligent Systems group of the School of Computing and
+Electrical Engineering, Indian Institute of Technology Mandi, Himachal Pradesh, India. His research addresses the
+reliability of optical character recognition, in particular OCR verification with graph neural networks and
+unsupervised methods for low-resolution text. He has published
+work on multi-feature graph convolution networks for Hindi OCR verification at the BHASHA workshop (2025) and on
+unsupervised confirmation of low-resolution OCR at the Mind, Brain, and Consciousness Conference (2025). ORCID: 0009-0001-9035-4392. E-mail: s24130@students.iitmandi.ac.in.}
+
+\bio{bios/saxena.jpg}{Sanhita Saxena}{is an M.Tech Research Scholar in the School of Mathematical and Statistical
+Sciences, Indian Institute of Technology Mandi, Himachal Pradesh, India. Her research focuses on label-efficient verification of optical character recognition
+with graph neural networks: she is the lead author of ``Reading Between the Characters: Label-Efficient OCR Verification
+with Graph Neural Networks'' (NICCAI 2026, Hyderabad), which models each word as a relational line graph of
+real-versus-rendered character comparisons and reaches near fully supervised accuracy from 25 labelled examples per
+class. Her interests include few-shot learning, graph representation learning and document image analysis. Before
+her research degree she trained as a full-stack (MERN) web developer. E-mail: s25008@students.iitmandi.ac.in.}

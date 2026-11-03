@@ -1,0 +1,19 @@
+LOCUS (full) & .973 & \second{.993} & \best{.992} & .968 & .991 &  \\
+\midrule
++ CV-selected prior/anchored head & \second{.974} & \second{.993} & .990 & .968 & \second{.992} & -0.000 \\
++ linear probe on embedding & \second{.974} & \second{.993} & \best{.992} & \second{.969} & \best{.993} & +0.001 \\
+w/o verifier-agreement node features & \second{.974} & \second{.993} & \second{.991} & .968 & .987 & -0.001 \\
+w/o edit-graph GNN (char evidence LR) & .973 & .992 & .990 & .959 & \best{.993} & -0.002 \\
+w/o label-free pretraining & .969 & .992 & .990 & \best{.970} & .990 & -0.002 \\
+w/o local-optimality term & .972 & \second{.993} & \best{.992} & .966 & .990 & -0.001 \\
+w/o repair loss & .971 & \second{.993} & \best{.992} & .965 & .990 & -0.001 \\
+w/o render-normalisation & .973 & \second{.993} & \best{.992} & .967 & \second{.992} & -0.000 \\
+w/o latent render distance & .973 & \second{.993} & \best{.992} & \second{.969} & .990 & -0.000 \\
+likelihood only (no render) & \second{.974} & .992 & \second{.991} & \second{.969} & \second{.992} & +0.000 \\
+TrOCR verifier only & .964 & .991 & \best{.992} & .956 & .991 & -0.005 \\
+PARSeq verifier only & \second{.974} & \second{.993} & .990 & .965 & \second{.992} & -0.001 \\
+star edges only & .971 & \second{.993} & \best{.992} & \second{.969} & .991 & -0.001 \\
+no message passing & \best{.975} & \best{.994} & \best{.992} & .967 & .991 & +0.000 \\
+GCN backbone & .970 & \second{.993} & \second{.991} & .966 & .990 & -0.002 \\
+GraphSAGE backbone & .973 & \second{.993} & \best{.992} & \best{.970} & .990 & -0.000 \\
+GIN backbone & .973 & .991 & .989 & .957 & .990 & -0.004 \\

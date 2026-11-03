@@ -1,0 +1,117 @@
+\section{Proposed Method: LOCUS}
+\label{sec:method}
+\textbf{Problem statement.} An OCR engine $\mathcal{E}$ maps a word (or text-line) image $x$ to a claim
+$h=\mathcal{E}(x)$. The engine is a black box: we observe only $h$. With $t$ the true transcription, verification
+predicts $y=\mathbf{1}[h=t]$ (\textsc{Correct} vs.\ \textsc{Incorrect}) and, optionally, proposes a repair $\hat t$.
+We study the label-efficient regime with only $k\in\{5,10,25,50,100\}$ labelled words per class plus an unlabelled pool
+of images with engine outputs, and also report full supervision. Figure~\ref{fig:arch} gives an overview on a real
+test word and Algorithm~\ref{alg:locus} summarises inference.
+
+\begin{figure}[p]
+\centering
+\resizebox{0.93\linewidth}{!}{\input{fig_arch}}
+\caption{\textbf{LOCUS at a glance}, on a real FUNSD test word (truth \texttt{THE}). (a)~A black-box engine reads
+\texttt{TRE}. (b)~LOCUS builds the claim's counterfactual string graph. (c)~Every hypothesis is scored by its
+render-normalised likelihood ratio under two frozen recognisers. (d)~A relation-aware graph network compares the claim
+with its rivals and (e)~rejects it, proposing the ground truth as repair. (f)~Pretraining uses no human labels;
+(g)~adaptation uses $k$ labelled words per class. All strings, images and numbers shown are real.}
+\label{fig:arch}
+\end{figure}
+
+\subsection{Counterfactual string graphs}
+\label{sec:graph}
+For each claim $h$ we build a graph $G(h)=(\mathcal{V},\mathcal{E})$ whose nodes are strings: the claim and up to
+$M=28$ counterfactual neighbours generated without any ground truth, in this priority order: (i)~the greedy readings
+$g_1,g_2$ of two frozen verifier recognisers $V_1,V_2$; (ii)~\emph{reading-aligned edits}, the single substitutions,
+insertions and deletions that move $h$ one step towards $g_1$ or $g_2$ under a Levenshtein alignment; (iii)~\emph{confusion
+edits}: substitutions within visually confusable groups (e.g.\ \{\texttt{O,0,o,Q,D}\}, \{\texttt{I,l,1,|}\},
+\{\texttt{5,S}\}), case flips and single deletions. Every neighbour is linked to the claim by an edge typed by its edit
+operation (seven types); \emph{sibling} edges link neighbours that edit the same position (competing explanations of
+one glyph) and \emph{path} edges link each reading to the single edits leading to it, giving a one-hot edge type
+$e_{uv}\in\{0,1\}^{11}$. OCR errors are near misses, so the truth lies inside $G(h)$ for most real errors
+(Table~\ref{tab:truth_in_graph}), which makes repair possible.
+
+\subsection{Render-normalised evidence}
+\label{sec:evidence}
+Let $s_V(v\mid x)=\sum_i\log p_V(v_i\mid v_{<i},x)$ be the teacher-forced log-likelihood of string $v$ under a frozen
+autoregressive recogniser $V$. It conflates visual fit with the prior that $V$'s decoder has learned over strings: a
+correct but rare string (a serial number, a surname, lower-case text under a recogniser trained on upper-case
+receipts) scores low. With $R(v)$ a clean rendering of $v$ in a standard font at the height of $x$, we define
+\begin{equation}
+\rho_V(v)\;=\;s_V(v\mid x)\;-\;s_V\big(v\mid R(v)\big).
+\label{eq:rho}
+\end{equation}
+Under the factorisation $\log p_V(v\mid x)\approx\log p_{\mathrm{vis}}(x\mid v)+\log\pi_V(v)-\log Z(x)$ the string
+prior $\pi_V(v)$ appears in both terms and cancels; $\rho_V(v)\approx0$ means ``$x$ is as convincing a picture of $v$
+as a perfect rendering'', while strongly negative values flag visual disagreement (Figure~\ref{fig:render}). We also
+record the token-level minima of the log-likelihood and of the ratio (an error is often a single character) and the
+cosine distance between $V$'s decoder states on $x$ and on $R(v)$. Every quantity is computed with two recognisers of
+different design: $V_1$=TrOCR-base~\cite{li2023trocr} (ViT encoder, BPE decoder; the printed, handwritten or
+scene-text checkpoint matching the domain) and $V_2$=PARSeq~\cite{bautista2022parseq} (character-level permuted
+autoregressive decoder). Neither is fine-tuned. Each node thus carries $2\times11$ evidence features, seven
+claim-relative differences $\phi(v)-\phi(h)$, its edit type and its relative edit position.
+
+\begin{figure}[t]
+\centering
+\resizebox{0.9\linewidth}{!}{\input{fig_render}}
+\caption{\textbf{Render normalisation.} (a) The same frozen recogniser scores hypothesis $v$ twice, teacher-forced on
+the real crop and on a clean rendering of $v$; the difference cancels the decoder's prior over strings. (b) Real
+TrOCR values for the word of Figure~\ref{fig:arch}: the case variant \texttt{TRe} looks far less likely than
+\texttt{TRE} on the raw score only because TrOCR's decoder dislikes the string, which the ratio removes.}
+\label{fig:render}
+\end{figure}
+
+\subsection{The LOCUS network}
+\label{sec:model}
+Node features are standardised with statistics of the \emph{unlabelled} pool and embedded linearly. Three
+relation-aware GATv2 layers~\cite{brody2022gatv2} with edge features and residual LayerNorm update the node states:
+\begin{equation}
+\begin{aligned}
+h_u^{(\ell+1)}&=\mathrm{LN}\Big(h_u^{(\ell)}+\sigma\Big(\textstyle\sum_{v\in\mathcal{N}(u)}\alpha_{uv}^{(\ell)}W^{(\ell)}h_v^{(\ell)}\Big)\Big),\\
+\alpha_{uv}^{(\ell)}&=\mathrm{softmax}_v\Big(a^\top\mathrm{LReLU}\big(W[h_u\|h_v\|e_{uv}]\big)\Big).
+\end{aligned}
+\end{equation}
+\textbf{Local-optimality readout.} A plausibility score $q_v=w_q^\top\mathrm{MLP}(h_v)$ defines
+$P_{\mathrm{opt}}(v\mid G)=\exp q_v/\sum_{u\in\mathcal{V}}\exp q_u$, the probability that $v$ is the best explanation of
+$x$ within its neighbourhood. The verdict combines the claim's state, an attention pool and a max pool over its rivals,
+and the log-probability that the claim itself is the local optimum,
+\begin{equation}
+\mathrm{logit}\,P(y=1\mid x,h)=\mathrm{MLP}\big([h_h\,\|\,\textstyle\sum_v a_v h_v\,\|\,\max_v h_v]\big)+\beta\log P_{\mathrm{opt}}(h\mid G),
+\end{equation}
+and the same distribution gives the repair $\hat t=\arg\max_{v\neq h}P_{\mathrm{opt}}(v\mid G)$. Complementing the
+string-level graph, \emph{character evidence} summarises per-position counterfactual margins of the claim (drop in
+$s_{V_1}$ under confusable replacement, deletion or case flip, token entropy and token-level ratio), pooled by
+mean/min/max.
+
+\subsection{Label-free pretraining and few-shot adaptation}
+\label{sec:pretrain}
+On the unlabelled training images we keep those on which two OCR engines agree (a high-precision proxy for
+correctness) and pair each with (i) the agreed string as a pseudo-correct claim and (ii) an OCR-style corruption of it
+(confusable substitution, case flip, deletion or insertion) as a pseudo-incorrect claim whose repair is the original.
+\ours{} is trained on these graphs with
+$\mathcal{L}=\mathrm{BCE}\big(P(y=1\mid x,h),\tilde y\big)-\lambda\log P_{\mathrm{opt}}(\tilde t\mid G)$ ($\lambda=0.5$),
+where $\tilde y$ is the pseudo-label and $\tilde t$ the node holding the pseudo-truth; no human label is used. Given
+$k$ labelled words per class we (a) fine-tune the pretrained network for 300 steps (AdamW, lr $3\cdot10^{-4}$) and
+(b) fit an $\ell_2$-regularised logistic regression on the frozen embedding $[z\,\|\,\log P_{\mathrm{opt}}\,\|\,\mathrm{logit}]$
+and the character evidence, with regularisation chosen by cross-validation \emph{on the support set only}; the verdict
+averages (a) and (b). No validation labels are used in the few-shot regime.
+
+\begin{algo}[t]
+\centering
+\small
+\fbox{\begin{minipage}{0.95\linewidth}
+\textbf{Input:} word image $x$, engine claim $h$; frozen recognisers $V_1,V_2$; renderer $R$; trained \ours{} network.\\
+\textbf{Output:} $P(\textsc{Correct}\mid x,h)$ and a repair proposal $\hat t$.
+\begin{enumerate}[1.]
+\item $g_1\leftarrow V_1(x)$, $g_2\leftarrow V_2(x)$ \hfill\emph{(greedy readings)}
+\item $\mathcal{V}\leftarrow\{h,g_1,g_2\}\cup\mathrm{AlignedEdits}(h,g_1,g_2)\cup\mathrm{ConfusionEdits}(h)$, truncated to $M{+}1$ nodes
+\item \textbf{for} each $v\in\mathcal{V}$ and $V\in\{V_1,V_2\}$: $\rho_V(v)\leftarrow s_V(v\mid x)-s_V(v\mid R(v))$, plus token minima and latent distance
+\item build typed edges (edit, sibling, path) and node features $[\phi(v)\,\|\,\phi(v)-\phi(h)\,\|\,\text{edit type, position}]$
+\item run 3 GATv2 layers; compute $P_{\mathrm{opt}}(\cdot\mid G)$ and $\mathrm{logit}\,P(y=1\mid x,h)$
+\item average with the support-fitted logistic head on $[z\,\|\,\log P_{\mathrm{opt}}\,\|\,\mathrm{logit}]$ and character evidence
+\item \textbf{return} $P$, and $\hat t=\arg\max_{v\neq h}P_{\mathrm{opt}}(v\mid G)$ if $P<0.5$
+\end{enumerate}
+\end{minipage}}
+\caption{\ours{} inference for one claim.}
+\label{alg:locus}
+\end{algo}

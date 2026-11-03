@@ -1,0 +1,11 @@
+pretrain fraction & 0.1 & \second{.943} & .967 & .977 & \second{.993} & .902 & \second{.968}\\
+pretrain fraction & 0.25 & \best{.944} & \second{.968} & .978 & \best{.994} & \best{.908} & \best{.970}\\
+pretrain fraction & 0.5 & .941 & .967 & \second{.979} & \best{.994} & \second{.904} & \best{.970}\\
+pretrain fraction & 1.0 & .940 & \best{.974} & \best{.980} & \second{.993} & .900 & .967\\
+\midrule
+fine-tuning steps & 100 & \best{.942} & \best{.976} & .975 & \best{.993} & .884 & \second{.960}\\
+fine-tuning steps & 300 & \second{.940} & \second{.974} & \best{.980} & \best{.993} & \best{.900} & \best{.967}\\
+fine-tuning steps & 1000 & .938 & \second{.974} & \second{.979} & \best{.993} & \second{.899} & \best{.967}\\
+\midrule
+support selection & random & \best{.940} & \best{.974} & \best{.980} & \second{.993} & \second{.900} & \best{.967}\\
+support selection & label-free $k$-means & \second{.935} & \second{.964} & \best{.980} & \best{.994} & \best{.907} & \second{.964}\\

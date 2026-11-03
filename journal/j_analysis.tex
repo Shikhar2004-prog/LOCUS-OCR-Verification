@@ -1,0 +1,100 @@
+\section{Analysis: What Drives the Gains?}
+\label{sec:analysis}
+\subsection{Statistical significance at the document level}
+Words cropped from one page share scanner, font and annotator, so a word-level bootstrap overstates confidence. For
+FUNSD and CORD we recovered the source document of every crop (by replaying the seeded crop selection, verified against
+the released manifest with zero mismatches) and resample whole \emph{documents} (50 test forms, 100 test receipts).
+IIIT5K has one word per image, so word-level resampling is exact; the public SROIE and IAM releases carry no document
+identifiers, so their intervals are word-level and may be optimistic (Table~\ref{tab:significance}). \SIGSENTENCE
+
+\begin{table}[t]\centering
+\caption{\textbf{Paired bootstrap} (2{,}000 resamples) of \ours{} ($k=25$) against the strongest baselines: difference in
+AUROC and in macro-F1, 95\% interval and two-sided $p$. Resampling unit: documents for FUNSD and CORD, words otherwise.}
+\label{tab:significance}
+\footnotesize\setlength{\tabcolsep}{2.5pt}
+\resizebox{\linewidth}{!}{\begin{tabular}{llllllllll}\toprule
+Dataset & unit & Baseline & $\Delta$AUROC & 95\% CI & $p$ & $\Delta$F1 & 95\% CI & $p$\\\midrule
+\tabinput{tables/significance.tex}
+\bottomrule\end{tabular}}\end{table}
+
+\subsection{How much does \ours{} depend on its recognisers?}
+Table~\ref{tab:recog} lists each verifier's word accuracy and \ours{}' gain over the better re-recognition baseline;
+Table~\ref{tab:strata} splits every test set by \emph{which} verifier reads the word correctly. Three regularities hold
+on all five datasets. (i) When both verifiers read the word correctly every method is nearly perfect. (ii) When only one
+verifier is right, re-recognition built on the \emph{other} verifier fails badly, while \ours{} stays accurate because it
+weighs the evidence of both (IAM: 89.5\% vs.\ 25.7\% for PARSeq agreement on words only TrOCR reads, 89.0\% vs.\ 43.6\% for
+TrOCR agreement on words only PARSeq reads). (iii) When neither is right, all methods degrade. \ours{}' gain is therefore
+governed by how often the verifiers \emph{disagree in correctness}: it is largest on IAM, where each verifier alone is
+right on only 42--65\% of words, and vanishes on IIIT5K, where PARSeq is right on 98.5\%. \ours{} is best understood as a
+learned, label-efficient combination of complementary recognisers through their counterfactual evidence, not as a
+substitute for a strong in-domain recogniser.
+
+\begin{table}[t]\centering
+\caption{\textbf{Recogniser dependence.} Word accuracy (\%) of each verifier's reading, the better re-recognition baseline,
+and \ours{} ($k=25$) against it.}
+\label{tab:recog}
+\scriptsize\setlength{\tabcolsep}{3.5pt}
+\begin{tabular}{lccccccccc}\toprule
+& \multicolumn{2}{c}{verifier accuracy} & best & \multicolumn{3}{c}{macro-F1} & \multicolumn{3}{c}{AUROC}\\
+Dataset & TrOCR & PARSeq & baseline & base & \ours{} & $\Delta$ & base & \ours{} & $\Delta$\\\midrule
+\tabinput{tables/recog_dependence.tex}
+\bottomrule\end{tabular}\end{table}
+
+\begin{table}[t]\centering
+\caption{\textbf{Decision accuracy (\%) stratified by which verifier reads the word correctly} ($k=25$; err.: share of
+incorrect claims in the stratum; strata with fewer than 20 words omitted).}
+\label{tab:strata}
+\scriptsize\setlength{\tabcolsep}{4pt}
+\begin{tabular}{llcccccc}\toprule
+Dataset & stratum & words & err.\ (\%) & \ours{} & PARSeq agree. & TrOCR agree.\\\midrule
+\tabinput{tables/recog_strata.tex}
+\bottomrule\end{tabular}\end{table}
+
+\subsection{Why counterfactual evidence matters more than message passing}
+\label{sec:mp}
+Removing message passing does not hurt (Table~\ref{tab:ablation}). To understand why, Table~\ref{tab:mp} runs five
+controlled variants, each pretrained label-free with the same change. \MPSENTENCE
+
+\begin{table}[t]\centering
+\caption{\textbf{Message passing versus counterfactual evidence} ($k=25$, macro-F1 / AUROC, ensembles of five seeds; best
+in bold, second best underlined). Claim-relative features: the differences $\phi(v)-\phi(h)$ between each rival and the
+claim and the claim's agreement with the verifiers' readings.}
+\label{tab:mp}
+\footnotesize\setlength{\tabcolsep}{3pt}
+\resizebox{\linewidth}{!}{\begin{tabular}{lccccc}\toprule
+Variant & FUNSD & CORD & SROIE & IAM & IIIT5K\\\midrule
+\tabinput{tables/mp_analysis.tex}
+\bottomrule\end{tabular}}\end{table}
+
+\subsection{Sensitivity to the rendering}
+The ratio depends on a rendering $R(v)$ whose font never matches the document. We re-extracted all evidence with four
+other fonts (including a handwriting-like one) and two other glyph sizes on fixed subsets of FUNSD, CORD and IAM (1{,}000
+training and 1{,}000 test words each) and re-evaluated the claim's ratio alone, the training-free $\rho$-margin rule, and
+\ours{} trained on the subset (Table~\ref{tab:fonts}). \FONTSENTENCE
+
+\begin{table}[t]\centering
+\caption{\textbf{Rendering sensitivity}: AUROC of the claim's ratio $\rho_{V_1}+\rho_{V_2}$ alone, AUROC of the
+training-free $\rho$-margin rule, and macro-F1 of \ours{} trained on 1{,}000 labelled words (3 seeds), for each rendering.}
+\label{tab:fonts}
+\footnotesize\setlength{\tabcolsep}{3pt}
+\resizebox{\linewidth}{!}{\begin{tabular}{lccccccccc}\toprule
+& \multicolumn{3}{c}{FUNSD} & \multicolumn{3}{c}{CORD} & \multicolumn{3}{c}{IAM}\\
+Rendering & $\rho(h)$ & rule & \ours{} & $\rho(h)$ & rule & \ours{} & $\rho(h)$ & rule & \ours{}\\\midrule
+\tabinput{tables/font_sensitivity.tex}
+\bottomrule\end{tabular}}\end{table}
+
+\subsection{Robustness to annotation and cropping artefacts}
+\label{sec:charerr}
+Table~\ref{tab:charerr} re-scores every method after removing incorrect claims that differ from the ground truth only in
+case or punctuation, which the audit (Section~\ref{sec:qualitative}) shows are often annotation conventions, label noise
+or fragments of neighbouring glyphs. \CHARSENTENCE
+
+\begin{table}[t]\centering
+\caption{\textbf{AUROC on all errors / on genuine character errors only} ($k=25$). Removed: share of incorrect claims that
+differ from the ground truth only in case or punctuation.}
+\label{tab:charerr}
+\footnotesize\setlength{\tabcolsep}{3pt}
+\resizebox{\linewidth}{!}{\begin{tabular}{lcccccc}\toprule
+Dataset & removed & \ours{} & PARSeq graded & TrOCR re-OCR & Qwen2.5-VL-7B & Engine conf.\\\midrule
+\tabinput{tables/char_error_subset.tex}
+\bottomrule\end{tabular}}\end{table}

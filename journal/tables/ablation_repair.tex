@@ -1,0 +1,19 @@
+LOCUS (full) & .644 & .789 & \second{.842} & .269 & .842 &  \\
+\midrule
++ CV-selected prior/anchored head & .644 & .789 & \second{.842} & .269 & .842 & +0.000 \\
++ linear probe on embedding & .644 & .789 & \second{.842} & .269 & .842 & +0.000 \\
+w/o verifier-agreement node features & \best{.658} & .786 & .841 & .262 & .846 & +0.001 \\
+w/o edit-graph GNN (char evidence LR) & -- & -- & -- & -- & -- & -- \\
+w/o label-free pretraining & .646 & \best{.887} & .785 & \best{.463} & \best{.908} & +0.060 \\
+w/o local-optimality term & .641 & .791 & .841 & .276 & .838 & -0.000 \\
+w/o repair loss & .592 & .791 & .838 & .328 & \second{.867} & +0.006 \\
+w/o render-normalisation & .625 & .771 & \best{.843} & .274 & .826 & -0.010 \\
+w/o latent render distance & .640 & .799 & .841 & .261 & .845 & -0.000 \\
+likelihood only (no render) & .594 & .755 & .841 & .266 & .840 & -0.018 \\
+TrOCR verifier only & .573 & .731 & .840 & .226 & .835 & -0.037 \\
+PARSeq verifier only & .616 & \second{.860} & .810 & \second{.356} & .739 & -0.001 \\
+star edges only & \second{.650} & .790 & .841 & .272 & .811 & -0.005 \\
+no message passing & .625 & .831 & .836 & .261 & .837 & +0.001 \\
+GCN backbone & .619 & .796 & .816 & .267 & .829 & -0.012 \\
+GraphSAGE backbone & .623 & .782 & .841 & .274 & .838 & -0.006 \\
+GIN backbone & .615 & .752 & .793 & .239 & .843 & -0.029 \\
