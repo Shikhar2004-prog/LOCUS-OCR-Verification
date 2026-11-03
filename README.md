@@ -51,7 +51,7 @@ The results are mixed against the strongest baselines:
 | `results/preds_*.npy`, `repair_*.npy`, `reocr_*.json` | test-set predictions, repair proposals, re-recognition outputs |
 | `results/audit/annotations.json` | manual audit labels (G/N/C/A/P) of the sampled crops |
 | `paper/` | output folder for generated tables and figures |
-| `journal/` | journal manuscript (IRO Journals LaTeX template): sources, figures, tables, author photos, and the compiled camera-ready and anonymous PDFs. Main files: `locus_journal.tex` (named) and `locus_journal_anonymous.tex` (double-blind) |
+| `journal/` | journal manuscript (IRO Journals template): `locus_journal.tex` (article, 25 pp.) and `locus_supplementary.tex` (supplementary material), anonymous variants, sources, figures, tables, author photos and the compiled PDFs (`LOCUS_journal_camera_ready.pdf`, `LOCUS_supplementary.pdf`, ...); build with `journal/build.sh` |
 
 The dataset images and ground-truth transcriptions are **not** redistributed (licences of IAM and others).
 `extract_crops.py` rebuilds them deterministically from the public releases.

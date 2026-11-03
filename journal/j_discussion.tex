@@ -11,7 +11,7 @@ advance \emph{which} recogniser to trust: the best re-recognition baseline chang
 \textbf{Limitations.} All design decisions were made on FUNSD and CORD; SROIE, IAM and IIIT5K are held out. (i)~Repair is bounded by whether the truth lies in $G(h)$, which holds for only about half of the
 handwriting errors (Table~\ref{tab:truth_in_graph}); verification degrades more gracefully because a claim can lose to a
 rival that is not the truth. (ii)~Pretraining relies on engine agreement, whose precision ranges from 84\% to 99\%
-(Appendix~\ref{app:pretrain}); it helps on four datasets but not on IAM, where agreement is least precise.
+(Supplementary Table~\sref{tab:pretrain_stats}); it helps on four datasets but not on IAM, where agreement is least precise.
 (iii)~TrOCR's printed checkpoints were fine-tuned on SROIE and PARSeq was developed on scene-text benchmarks such as
 IIIT5K; the re-recognition baselines use the same recognisers, so the comparison is on equal footing, but absolute
 numbers there should be read with this in mind. (iv)~Message passing, the local-optimality term and render

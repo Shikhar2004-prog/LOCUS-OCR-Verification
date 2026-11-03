@@ -3,7 +3,7 @@
 \subsection{Main comparison}
 \label{sec:main_results}
 Tables~\ref{tab:main} and~\ref{tab:main_auroc} compare \ours{} with all baselines at $k=25$ (other $k$ and all metrics:
-Appendix~\ref{app:full}).
+Supplementary Section~\sref{app:full}).
 
 \begin{table}[t]\centering
 \caption{\textbf{Main comparison, macro-F1} at $k=25$ labelled words per class (learned methods: ensemble of five
@@ -52,20 +52,20 @@ SROIE-trained recogniser).
 \begin{figure}[t]\centering
 \includegraphics[width=0.8\linewidth]{figs/learning_curves_macro_f1.pdf}
 \caption{\textbf{Label efficiency.} Macro-F1 versus labelled words per class (ensembles of five seeds; dashed:
-label-free baselines). AUROC curves: Appendix~\ref{app:extra}.}
+label-free baselines). AUROC curves: Supplementary Figure~\sref{fig:lc_auroc}.}
 \label{fig:lc}
 \end{figure}
 
 \subsection{Label efficiency and render normalisation}
 Figure~\ref{fig:lc} shows that \ours{} is close to its fully supervised accuracy with $k=10$--$25$ labelled words per
 class on the document datasets, and keeps improving with more labels on IAM; seed variance shrinks rapidly with $k$
-(Appendix~\ref{app:full}). Figure~\ref{fig:rho} (Appendix~\ref{app:extra}) isolates Equation~\eqref{eq:rho} on a single score: the raw TrOCR
+(Supplementary Section~\sref{app:full}). Supplementary Figure~\sref{fig:rho} isolates Equation~\eqref{eq:rho} on a single score: the raw TrOCR
 likelihood of the claim is a poor detector wherever the recogniser's string prior is mismatched with the domain, and
 subtracting the likelihood of the claim's own rendering repairs it. In the full model, where a second verifier and
 agreement features overlap, removing render normalisation costs little (Table~\ref{tab:ablation}); with TrOCR as the
 only verifier it helps where TrOCR's prior is mismatched (SROIE .956 vs.\ .902, CORD .973 vs.\ .967, IIIT5K .957 vs.\
 .951), is neutral on FUNSD and slightly harmful on IAM, and with PARSeq alone it makes no difference
-(Table~\ref{tab:single} in Appendix~\ref{app:extra}): render normalisation corrects a \emph{biased} recogniser and is neutral for an unbiased one.
+(Supplementary Table~\sref{tab:single}): render normalisation corrects a \emph{biased} recogniser and is neutral for an unbiased one.
 
 
 
@@ -73,7 +73,7 @@ only verifier it helps where TrOCR's prior is mismatched (SROIE .956 vs.\ .902, 
 \label{sec:ablation}
 \begin{table}[t]\centering
 \caption{\textbf{Ablations} at $k=25$, macro-F1 (ensemble of five seeds). $\Delta$: mean change w.r.t.\ the full model
-over the datasets where the variant was run (AUROC: Appendix~\ref{app:extra}).}
+over the datasets where the variant was run (AUROC: Supplementary Table~\sref{tab:ablation_auroc}).}
 \label{tab:ablation}
 \scriptsize\setlength{\tabcolsep}{4.5pt}
 \begin{tabular}{lcccccc}\toprule
