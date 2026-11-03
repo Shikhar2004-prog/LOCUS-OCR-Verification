@@ -2,7 +2,7 @@
 
 Code, benchmark definition and raw results for the paper
 *LOCUS: Verifying OCR by Local Optimality over Counterfactual String Graphs*
-(Shikhar Dubey, Sanhita Saxena, Vikash Tripathi, Syed Abbas; IIT Mandi).
+(Shikhar Dubey, Sanhita Saxena; IIT Mandi).
 
 OCR engines always return a transcription. **LOCUS** decides whether to trust it by asking whether the
 claimed string is the *best explanation of the image among the strings it could have been confused with*:
@@ -99,7 +99,7 @@ segmentation-free counterfactual string graph and render-normalised evidence, an
 ```bibtex
 @article{dubey2026locus,
   title  = {{LOCUS}: Verifying {OCR} by Local Optimality over Counterfactual String Graphs},
-  author = {Dubey, Shikhar and Saxena, Sanhita and Tripathi, Vikash and Abbas, Syed},
+  author = {Dubey, Shikhar and Saxena, Sanhita},
   year   = {2026},
   note   = {Under review}
 }
