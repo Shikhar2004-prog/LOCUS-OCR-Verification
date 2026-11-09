@@ -18,6 +18,33 @@ claimed string is the *best explanation of the image among the strings it could 
 
 ![teaser](figures/datasets_examples.png)
 
+## Application and demo video
+
+**[`app/`](app/)** is a web application that puts LOCUS after an OCR engine. Upload a scanned or photographed document:
+* Tesseract reads it;
+* LOCUS gives every word a probability of being correct;
+* the words that need a human are flagged (red, with a suggested repair), and the rest are accepted (green).
+
+```bash
+pip install -r requirements.txt -r app/requirements.txt    # + apt install tesseract-ocr
+python app/app.py                                          # http://localhost:7860
+```
+
+**Demo video:** [`app/media/LOCUS_demo.mp4`](app/media/LOCUS_demo.mp4) (2.5 min, 1080p). It shows:
+* the problem;
+* how LOCUS decides on one word, using live model output;
+* a real screen recording of the app;
+* measured results;
+* the human-review workload saved on the benchmarks;
+* applications and limitations.
+
+![LOCUS app](app/media/screens/01_invoice_result.png)
+
+The video and the app use three demo pages: a degraded invoice, a faded receipt and a claim form. The pages are
+synthetic, so the true text of every word is known. On them, Tesseract's own confidence catches 23, 20 and 5 of the
+errors at the same review budget. LOCUS catches 37 of 38, 28 of 30 and 10 of 10. Flagging disagreement with PARSeq
+does about as well on these pages (details in [`app/README.md`](app/README.md)).
+
 ## Results (k = 25 labelled words per class)
 
 Macro-F1 / AUROC on the five benchmarks of real OCR errors (ensembles of five support sets):
@@ -51,6 +78,7 @@ The results are mixed against the strongest baselines:
 | `results/preds_*.npy`, `repair_*.npy`, `reocr_*.json` | test-set predictions, repair proposals, re-recognition outputs |
 | `results/audit/annotations.json` | manual audit labels (G/N/C/A/P) of the sampled crops |
 | `paper/` | output folder for generated tables and figures |
+| `app/` | demo web application, exported models (200 KB each), synthetic demo documents, demo video and screenshots |
 | `journal/` | journal manuscript (IRO Journals template): `locus_journal.tex` (article, 25 pp.) and `locus_supplementary.tex` (supplementary material), anonymous variants, sources, figures, tables, author photos and the compiled PDFs (`LOCUS_journal_camera_ready.pdf`, `LOCUS_supplementary.pdf`, ...); build with `journal/build.sh` |
 
 The dataset images and ground-truth transcriptions are **not** redistributed (licences of IAM and others).

@@ -1,0 +1,10 @@
+# LOCUS demo application (on top of the research requirements in ../requirements.txt)
+# Tested with Python 3.11, torch 2.7.1 (CUDA 11.8), torch_geometric 2.x, transformers 4.56.2
+gradio>=5.30,<6
+huggingface_hub==0.35.1     # keep compatible with transformers 4.56
+pytesseract>=0.3.10         # plus a Tesseract 5 binary: apt install tesseract-ocr
+pandas
+matplotlib
+pillow
+# only for re-recording the screen session (app/record_app.py):
+# playwright  &&  python -m playwright install chromium
