@@ -20,7 +20,14 @@ claimed string is the *best explanation of the image among the strings it could 
 
 ## Application and demo video
 
-**[`app/`](app/)** is a web application that puts LOCUS after an OCR engine. Upload a scanned or photographed document:
+**Quickest look: [`demo/`](demo/).** Download the folder and open `demo/index.html` in any browser. You do not need an install, a server or a GPU.
+It shows the real model outputs on three demo pages:
+* every word with P(correct), its repair and its counterfactual string graph;
+* a live review-threshold slider;
+* comparisons with Tesseract confidence and PARSeq;
+* the paper's results.
+
+**[`app/`](app/)** is the full web application that puts LOCUS after an OCR engine. Upload a scanned or photographed document:
 * Tesseract reads it;
 * LOCUS gives every word a probability of being correct;
 * the words that need a human are flagged (red, with a suggested repair), and the rest are accepted (green).
@@ -78,6 +85,7 @@ The results are mixed against the strongest baselines:
 | `results/preds_*.npy`, `repair_*.npy`, `reocr_*.json` | test-set predictions, repair proposals, re-recognition outputs |
 | `results/audit/annotations.json` | manual audit labels (G/N/C/A/P) of the sampled crops |
 | `paper/` | output folder for generated tables and figures |
+| `demo/` | no-install demo: open `index.html` in a browser (precomputed outputs of the real model, plus the video) |
 | `app/` | demo web application, exported models (200 KB each), synthetic demo documents, demo video and screenshots |
 | `journal/` | journal manuscript (IRO Journals template): `locus_journal.tex` (article, 25 pp.) and `locus_supplementary.tex` (supplementary material), anonymous variants, sources, figures, tables, author photos and the compiled PDFs (`LOCUS_journal_camera_ready.pdf`, `LOCUS_supplementary.pdf`, ...); build with `journal/build.sh` |
 

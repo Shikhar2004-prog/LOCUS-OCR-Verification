@@ -1,0 +1,529 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LOCUS OCR Verifier</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:opsz,wght@8..60,500&display=swap">
+<style>
+:root {
+  --bg: #f1f2ee; --panel: #ffffff; --ink: #1b1f27; --muted: #5f6673; --line: #d9dcd4;
+  --accent: #2a55b8; --accent-soft: #e4ebfa;
+  --good: #1d7a47; --good-soft: #dff1e6; --bad: #b8312f; --bad-soft: #f9e2df; --warn: #a86a00; --warn-soft: #fbefd6;
+  --f-display: "Source Serif 4", Georgia, serif;
+  --f-body: "IBM Plex Sans", system-ui, -apple-system, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #121418; --panel: #1b1e24; --ink: #e7e9ee; --muted: #9aa2af; --line: #2d323b;
+  --accent: #8fa9f0; --accent-soft: #232c45; --good: #6dd19a; --good-soft: #163126; --bad: #f2877c; --bad-soft: #3a1e1c;
+  --warn: #f0b85a; --warn-soft: #3a2c12; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #121418; --panel: #1b1e24; --ink: #e7e9ee; --muted: #9aa2af; --line: #2d323b;
+  --accent: #8fa9f0; --accent-soft: #232c45; --good: #6dd19a; --good-soft: #163126; --bad: #f2877c; --bad-soft: #3a1e1c;
+  --warn: #f0b85a; --warn-soft: #3a2c12; color-scheme: dark }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.55 var(--f-body); }
+.wrap { max-width: 1240px; margin: 0 auto; padding: 20px 16px 56px; }
+header.top { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 12px 24px; margin-bottom: 18px; }
+.brand h1 { font: 500 clamp(26px, 4vw, 36px)/1.1 var(--f-display); margin: 0; }
+.brand p { margin: 6px 0 0; color: var(--muted); max-width: 70ch; }
+nav.tabs { display: flex; gap: 4px; flex-wrap: wrap; }
+nav.tabs button { font: 500 13px var(--f-body); color: var(--muted); background: none; border: 0; padding: 8px 12px; border-radius: 6px; cursor: pointer; }
+nav.tabs button[aria-selected="true"] { background: var(--panel); color: var(--ink); box-shadow: inset 0 0 0 1px var(--line); }
+button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 16px; }
+.muted { color: var(--muted); }
+.mono { font-family: var(--f-mono); }
+h2 { font: 600 13px var(--f-body); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin: 0 0 10px; }
+h3 { font: 500 22px/1.25 var(--f-display); margin: 0 0 8px; }
+[hidden] { display: none !important; }
+
+/* controls */
+.controls { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; margin-bottom: 14px; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 7px; overflow: hidden; background: var(--panel); }
+.seg button { border: 0; background: none; color: var(--ink); font: 500 13px var(--f-body); padding: 7px 12px; cursor: pointer; }
+.seg button + button { border-left: 1px solid var(--line); }
+.seg button[aria-pressed="true"] { background: var(--accent); color: #fff; }
+label.ctl { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); }
+input[type=range] { width: 160px; accent-color: var(--accent); }
+.chip { display: inline-block; font: 500 12px var(--f-body); padding: 2px 8px; border-radius: 99px; }
+.chip.bad { background: var(--bad-soft); color: var(--bad); } .chip.good { background: var(--good-soft); color: var(--good); }
+.chip.warn { background: var(--warn-soft); color: var(--warn); }
+
+/* verify tab */
+.verify { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+@media (max-width: 900px) { .verify { grid-template-columns: 1fr; } }
+.pagebox { position: relative; background: #fff; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+.pagebox img { display: block; width: 100%; height: auto; }
+.pagebox svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.pagebox rect { cursor: pointer; }
+.pagebox rect.acc { fill: rgba(29,122,71,.10); stroke: #1d7a47; stroke-width: 1.4; }
+.pagebox rect.flag { fill: rgba(200,40,40,.16); stroke: #c62828; stroke-width: 2.2; }
+.pagebox rect.miss { stroke-dasharray: 4 3; stroke: #b07000; stroke-width: 2.4; fill: rgba(240,170,40,.18); }
+.pagebox rect:hover { stroke-width: 3.2; }
+.legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 12.5px; color: var(--muted); margin-top: 8px; }
+.legend i { display: inline-block; width: 14px; height: 10px; border-radius: 2px; vertical-align: -1px; margin-right: 5px; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(118px, 1fr)); gap: 8px; margin-bottom: 14px; }
+.stat { border: 1px solid var(--line); border-radius: 7px; padding: 10px 12px; }
+.stat b { display: block; font: 600 24px/1.1 var(--f-body); font-variant-numeric: tabular-nums; }
+.stat span { font-size: 12px; color: var(--muted); }
+.compare { width: 100%; border-collapse: collapse; font-size: 13.5px; margin-bottom: 6px; }
+.compare td, .compare th { padding: 6px 4px; border-bottom: 1px solid var(--line); text-align: left; }
+.compare td.n { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; }
+.bar { height: 6px; background: var(--line); border-radius: 3px; overflow: hidden; margin-top: 3px; }
+.bar > div { height: 100%; background: var(--accent); }
+.bar.loc > div { background: var(--good); }
+.flaglist { display: grid; gap: 6px; max-height: 360px; overflow: auto; padding-right: 4px; }
+.flagrow { display: grid; grid-template-columns: 110px minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 6px 8px; border: 1px solid var(--line); border-radius: 6px; cursor: pointer; background: none; color: inherit; text-align: left; font: inherit; width: 100%; }
+.flagrow:hover { border-color: var(--accent); }
+.flagrow img { max-width: 110px; max-height: 34px; background: #fff; border-radius: 3px; justify-self: start; }
+.flagrow .txt { font: 13.5px var(--f-mono); overflow-wrap: anywhere; }
+.corrected { font: 13px/1.7 var(--f-mono); white-space: pre-wrap; background: var(--bg); border-radius: 6px; padding: 10px 12px; max-height: 260px; overflow: auto; }
+.corrected .fix { background: var(--good-soft); color: var(--good); border-radius: 3px; padding: 0 2px; }
+.corrected .q { background: var(--warn-soft); color: var(--warn); border-radius: 3px; padding: 0 2px; }
+.sect { margin-top: 18px; }
+
+/* inspector */
+.bench { display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: 16px; align-items: start; }
+@media (max-width: 900px) { .bench { grid-template-columns: minmax(0, 1fr); } }
+.bench > *, .verify > *, .how > *, .verdict > * { min-width: 0; }
+.list { padding: 0; overflow: hidden; }
+.filters { display: grid; gap: 8px; padding: 12px; border-bottom: 1px solid var(--line); }
+.filters select, .filters input { width: 100%; font: 13px var(--f-body); padding: 7px 8px; border: 1px solid var(--line); border-radius: 6px; background: var(--panel); color: var(--ink); }
+.words { max-height: 640px; overflow: auto; }
+.wbtn { display: grid; grid-template-columns: 1fr auto; gap: 2px 8px; width: 100%; padding: 8px 12px; border: 0; border-bottom: 1px solid var(--line); background: none; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.wbtn:hover { background: var(--accent-soft); }
+.wbtn[aria-current="true"] { background: var(--accent-soft); box-shadow: inset 3px 0 0 var(--accent); }
+.wbtn .c { font: 14px var(--f-mono); overflow-wrap: anywhere; }
+.wbtn .s { font-size: 11.5px; color: var(--muted); grid-column: 1 / -1; }
+.verdict { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; }
+@media (max-width: 640px) { .verdict { grid-template-columns: 1fr; } }
+.cropbig { background: #fff; border: 1px solid var(--line); border-radius: 6px; padding: 12px; display: grid; place-items: center; min-height: 90px; }
+.cropbig img { height: 72px; width: auto; max-width: 100%; object-fit: contain; }
+.kv { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 4px 14px; font-size: 14px; margin: 0; }
+.kv dt { color: var(--muted); } .kv dd { margin: 0; font-family: var(--f-mono); overflow-wrap: anywhere; }
+.pbig { font: 600 34px/1 var(--f-body); font-variant-numeric: tabular-nums; }
+.meter { height: 10px; border-radius: 5px; background: linear-gradient(90deg, var(--bad) 0%, var(--warn) 50%, var(--good) 100%); position: relative; margin: 8px 0 4px; opacity: .85; }
+.meter i { position: absolute; top: -4px; width: 3px; height: 18px; background: var(--ink); border-radius: 2px; }
+.meter b { position: absolute; top: -3px; width: 1px; height: 16px; background: var(--panel); opacity: .9; }
+.graphwrap svg { width: 100%; height: auto; display: block; }
+.graphwrap text { font-family: var(--f-mono); }
+.htab { width: 100%; border-collapse: collapse; font-size: 13px; }
+.htab th { text-align: left; font-weight: 500; color: var(--muted); font-size: 12px; padding: 6px; border-bottom: 1px solid var(--line); }
+.htab td { padding: 6px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+.htab td.n { text-align: right; font-variant-numeric: tabular-nums; font-family: var(--f-mono); }
+.htab tr.claim td:first-child { box-shadow: inset 3px 0 0 var(--accent); }
+.htab img { height: 26px; background: #fff; border-radius: 3px; }
+.scroll-x { overflow-x: auto; }
+
+/* how / results */
+.how { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+@media (max-width: 900px) { .how { grid-template-columns: 1fr; } }
+video { width: 100%; border-radius: 6px; background: #000; display: block; }
+ol.steps { padding-left: 20px; margin: 0; } ol.steps li { margin-bottom: 10px; }
+.res { width: 100%; border-collapse: collapse; font-size: 13.5px; min-width: 760px; }
+.res th, .res td { padding: 7px 8px; border-bottom: 1px solid var(--line); text-align: right; font-variant-numeric: tabular-nums; }
+.res th:first-child, .res td:first-child { text-align: left; }
+.res tr.us td { font-weight: 600; background: var(--accent-soft); }
+.res td.best { color: var(--good); font-weight: 600; }
+.workload { display: grid; gap: 14px; }
+.wl-row { display: grid; grid-template-columns: 70px minmax(0, 1fr); gap: 10px; align-items: center; font-size: 13px; }
+.wl-bars { display: grid; gap: 3px; }
+.wl-bar { display: grid; grid-template-columns: 170px minmax(0, 1fr) 46px; gap: 8px; align-items: center; }
+.wl-bar .t { height: 12px; background: var(--line); border-radius: 3px; overflow: hidden; }
+.wl-bar .t div { height: 100%; background: var(--muted); }
+.wl-bar.us .t div { background: var(--accent); } .wl-bar.us { font-weight: 600; }
+@media (max-width: 640px) { .wl-bar { grid-template-columns: 120px minmax(0, 1fr) 40px; } .wl-row { grid-template-columns: 1fr; } }
+.note { font-size: 13px; color: var(--muted); }
+footer { margin-top: 28px; font-size: 12.5px; color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <h1>LOCUS: is this OCR word right?</h1>
+      <p>Every word an OCR engine reads gets a probability of being correct, a suggested repair and the evidence behind it.
+        Precomputed outputs of the real model on three demo pages. Nothing to install.</p>
+    </div>
+    <nav class="tabs" role="tablist">
+      <button role="tab" data-tab="verify" aria-selected="true">Verify a document</button>
+      <button role="tab" data-tab="inspect" aria-selected="false">Inspect a word</button>
+      <button role="tab" data-tab="how" aria-selected="false">How it works</button>
+      <button role="tab" data-tab="results" aria-selected="false">Results</button>
+    </nav>
+  </header>
+
+  <!-- VERIFY -->
+  <section id="tab-verify">
+    <div class="controls">
+      <div class="seg" id="pageSeg"></div>
+      <label class="ctl">Review threshold P(correct) &lt; <b class="mono" id="thrVal">0.50</b>
+        <input type="range" id="thr" min="0.05" max="0.95" step="0.05" value="0.5"></label>
+      <label class="ctl"><input type="checkbox" id="showMiss" checked> mark errors LOCUS missed</label>
+    </div>
+    <div class="verify">
+      <div>
+        <div class="pagebox" id="pagebox"><img id="pageImg" alt="Demo document"><svg id="overlay"></svg></div>
+        <div class="legend">
+          <span><i style="background:rgba(200,40,40,.35);border:1px solid #c62828"></i>flagged for human review</span>
+          <span><i style="background:rgba(29,122,71,.2);border:1px solid #1d7a47"></i>accepted automatically</span>
+          <span id="missLegend"><i style="background:rgba(240,170,40,.3);border:1px dashed #b07000"></i>real error that was accepted</span>
+          <span>Click any word to inspect it.</span>
+        </div>
+      </div>
+      <div>
+        <div class="panel">
+          <h2>What a reviewer would see</h2>
+          <div class="stats" id="stats"></div>
+          <table class="compare" id="compare"></table>
+          <p class="note" id="compareNote"></p>
+        </div>
+        <div class="panel sect">
+          <h2>Flagged words, least trustworthy first</h2>
+          <div class="flaglist" id="flaglist"></div>
+        </div>
+      </div>
+    </div>
+    <div class="panel sect">
+      <h2>Text after review</h2>
+      <p class="note" style="margin-top:-4px">Green: repair proposed by LOCUS. Amber: flagged, with no single-word repair (for example, several words merged into one box). Text keeps Tesseract's reading order.</p>
+      <div class="corrected" id="corrected"></div>
+    </div>
+  </section>
+
+  <!-- INSPECT -->
+  <section id="tab-inspect" hidden>
+    <div class="bench">
+      <div class="panel list">
+        <div class="filters">
+          <select id="fPage"></select>
+          <select id="fKind">
+            <option value="featured">Featured examples</option>
+            <option value="flagged">Flagged by LOCUS</option>
+            <option value="errors">Real OCR errors</option>
+            <option value="missed">Errors LOCUS missed</option>
+            <option value="falarm">False alarms</option>
+            <option value="all">All words</option>
+          </select>
+          <input id="fSearch" type="search" placeholder="Search a word…">
+        </div>
+        <div class="words" id="wordList"></div>
+      </div>
+      <div id="inspector"></div>
+    </div>
+  </section>
+
+  <!-- HOW -->
+  <section id="tab-how" hidden>
+    <div class="how">
+      <div class="panel">
+        <h2>2.5-minute video</h2>
+        <video controls preload="metadata" src="LOCUS_demo.mp4"></video>
+        <p class="note">If the video does not play, open <span class="mono">LOCUS_demo.mp4</span> from this folder.</p>
+      </div>
+      <div class="panel">
+        <h3>The problem</h3>
+        <p>An OCR engine always returns text, including when it is wrong. Tesseract read the price <span class="mono">6.40</span> as
+          <span class="mono">640</span> and reported 0.92 confidence. Passed on to accounting, that becomes a wrong payment.</p>
+        <h3>How LOCUS decides, for one word</h3>
+        <ol class="steps">
+          <li><b>Counterfactual string graph.</b> Around the claimed string, list what it could have been confused with:
+            look-alike characters (0/O, 1/l, 5/S), case flips, deletions and insertions, and the readings of two frozen recognisers
+            (TrOCR-base and PARSeq).</li>
+          <li><b>Render-normalised evidence.</b> For each candidate <i>v</i>: ρ(v) = score(v | real image) − score(v | clean rendering of v).
+            Near 0 means the image looks as much like <i>v</i> as a clean print of <i>v</i> does. Very negative means it does not.</li>
+          <li><b>GNN with a local-optimality readout.</b> A graph network asks whether the claim is the best explanation among its
+            neighbours, P_opt. Pretrained without labels.</li>
+          <li><b>Few-shot head.</b> 25 labelled words per class adapt it to a new document type and give P(correct).</li>
+        </ol>
+        <h3>Where it helps</h3>
+        <p>Invoice and receipt capture, insurance and bank forms, healthcare and government intake, archive digitisation:
+          anywhere a team must choose between checking every word and trusting the engine.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESULTS -->
+  <section id="tab-results" hidden>
+    <div class="panel">
+      <h2>Benchmark results from the paper (Macro-F1 / AUROC, k = 25 labels per class)</h2>
+      <div class="scroll-x"><table class="res" id="benchTable"></table></div>
+      <p class="note">Best value per column in green. LOCUS has the best averages. It does not win everywhere: PARSeq re-reading ties on FUNSD and
+        is better on IIIT5K, and TrOCR re-reading has higher F1 on SROIE. The best re-reader changes from dataset to dataset; LOCUS stays near the top on all five.</p>
+    </div>
+    <div class="panel sect">
+      <h2>Human review needed so that auto-accepted words are 95% correct</h2>
+      <div class="workload" id="workload"></div>
+      <p class="note">Share of words a person must check (lower is better), from the paper's review-cost tables.</p>
+    </div>
+    <div class="panel sect">
+      <h2>Models behind this demo (held-out test sets, single seed)</h2>
+      <div class="scroll-x"><table class="res" id="modelTable" style="min-width:480px"></table></div>
+      <p class="note">This page uses the CORD-trained model. The other four ship with the full app (<span class="mono">python app/app.py</span>), which also runs on your own documents.</p>
+    </div>
+    <div class="panel sect">
+      <h2>Honest limitations</h2>
+      <ul>
+        <li>On these synthetic demo pages, flagging every word where PARSeq disagrees catches about as many errors as LOCUS (see the comparison on the first tab).</li>
+        <li>Substituting PARSeq's reading repairs more errors than LOCUS's repair proposal on four of five benchmarks.</li>
+        <li>Speed: about 18 words/s on one RTX A6000 (PARSeq alone: 372 words/s). Fine for back-office batches, not for real-time use.</li>
+        <li>Latin script and English benchmarks only. Words that Tesseract merges into one box are flagged but cannot be repaired word by word.</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer>
+    LOCUS: Verifying OCR by Local Optimality over Counterfactual String Graphs (Shikhar Dubey, Sanhita Saxena; IIT Mandi; under review).
+    Demo pages are synthetic, so the true text of every word is known. Rebuild this page with <span class="mono">python app/make_static_demo.py</span>.
+  </footer>
+</div>
+
+<script src="data.js"></script>
+<script>
+(function () {
+  const M = window.LOCUS_META, P = window.LOCUS_PAGES, R = window.LOCUS_RENDERS;
+  const $ = (s) => document.querySelector(s);
+  const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const f2 = (x) => Number(x).toFixed(2), f3 = (x) => Number(x).toFixed(3).replace(/^0\./, ".");
+  const state = { page: 0, thr: 0.5, showMiss: true, sel: null };
+
+  /* ---------- tabs ---------- */
+  function showTab(name) {
+    document.querySelectorAll("nav.tabs button").forEach((b) => b.setAttribute("aria-selected", b.dataset.tab === name));
+    ["verify", "inspect", "how", "results"].forEach((t) => ($("#tab-" + t).hidden = t !== name));
+    try { localStorage.setItem("locus_tab", name); } catch (e) {}
+  }
+  document.querySelectorAll("nav.tabs button").forEach((b) => b.addEventListener("click", () => showTab(b.dataset.tab)));
+
+  /* ---------- verify ---------- */
+  const flagged = (w) => w.p < state.thr;
+  P.forEach((pg, i) => {
+    const b = document.createElement("button");
+    b.textContent = pg.title; b.setAttribute("aria-pressed", i === 0);
+    b.addEventListener("click", () => { state.page = i; drawVerify(); syncInspectPage(); });
+    $("#pageSeg").appendChild(b);
+  });
+  $("#thr").addEventListener("input", (e) => { state.thr = +e.target.value; $("#thrVal").textContent = f2(state.thr); drawVerify(); drawWordList(); drawInspector(); });
+  $("#showMiss").addEventListener("change", (e) => { state.showMiss = e.target.checked; drawVerify(); });
+
+  function drawVerify() {
+    const pg = P[state.page], W = pg.words;
+    document.querySelectorAll("#pageSeg button").forEach((b, i) => b.setAttribute("aria-pressed", i === state.page));
+    $("#pageImg").src = pg.img;
+    const svg = $("#overlay");
+    svg.setAttribute("viewBox", `0 0 ${pg.w} ${pg.h}`);
+    svg.innerHTML = W.map((w) => {
+      const [x0, y0, x1, y1] = w.box, f = flagged(w), miss = !f && !w.correct && state.showMiss;
+      const cls = f ? "flag" : miss ? "miss" : "acc";
+      const tip = `${w.claim}  P(correct)=${f2(w.p)}${f && w.repair !== w.claim ? "  → " + w.repair : ""}`;
+      return `<rect class="${cls}" data-i="${w.i}" x="${x0 - 2}" y="${y0 - 2}" width="${x1 - x0 + 4}" height="${y1 - y0 + 4}" rx="2"><title>${esc(tip)}</title></rect>`;
+    }).join("");
+    $("#missLegend").hidden = !state.showMiss;
+
+    const n = W.length, err = W.filter((w) => !w.correct).length;
+    const fl = W.filter(flagged), caught = fl.filter((w) => !w.correct).length, fa = fl.length - caught;
+    const budget = fl.length;
+    const byConf = [...W].sort((a, b) => a.conf - b.conf).slice(0, budget);
+    const confCaught = byConf.filter((w) => !w.correct).length;
+    const pq = W.filter((w) => w.parseq !== w.claim), pqCaught = pq.filter((w) => !w.correct).length;
+    const rep = fl.filter((w) => !w.correct && w.truth && w.repair === w.truth).length;
+    $("#stats").innerHTML = [
+      [n, "words read by Tesseract"], [err, "real OCR errors"], [fl.length, `flagged (${Math.round(100 * fl.length / n)}% of words)`],
+      [`${caught}/${err}`, "errors caught"], [fa, "false alarms"], [rep, "exact repairs proposed"],
+    ].map(([b, s]) => `<div class="stat"><b>${b}</b><span>${s}</span></div>`).join("");
+    const row = (name, c, cls, extra) => `<tr><td>${name}${extra ? `<div class="note">${extra}</div>` : ""}<div class="bar ${cls}"><div style="width:${err ? 100 * c / err : 0}%"></div></div></td><td class="n">${c}/${err}</td></tr>`;
+    $("#compare").innerHTML = `<tr><th>Errors caught when reviewing…</th><th style="text-align:right">caught</th></tr>` +
+      row(`LOCUS: ${budget} words with P(correct) &lt; ${f2(state.thr)}`, caught, "loc") +
+      row(`Tesseract's own confidence: its ${budget} least confident words`, confCaught, "") +
+      row(`PARSeq disagreement: the ${pq.length} words where PARSeq reads differently`, pqCaught, "", pq.length !== budget ? "different review budget" : "");
+    $("#compareNote").textContent = "The page is synthetic, so the true text of every word is known. A second strong reader (PARSeq) does about as well on these pages; on the paper's benchmarks the best second reader changes from dataset to dataset.";
+
+    $("#flaglist").innerHTML = fl.length ? [...fl].sort((a, b) => a.p - b.p).map((w) => `
+      <button class="flagrow" data-i="${w.i}">
+        <img src="${w.crop}" alt="">
+        <span class="txt">${esc(w.claim)}${w.repair !== w.claim ? ` <span class="muted">→</span> <b>${esc(w.repair)}</b>` : ""}
+          <div class="note" style="font-family:var(--f-body)">truth: <span class="mono">${esc(w.truth ?? "—")}</span> · Tesseract conf ${f2(w.conf)}</div></span>
+        <span class="chip ${w.correct ? "warn" : "bad"}">${w.correct ? "false alarm" : "P " + f2(w.p)}</span>
+      </button>`).join("") : `<p class="muted">Nothing flagged at this threshold.</p>`;
+
+    let out = "", prevBottom = null, prevRight = null;
+    W.forEach((w) => {
+      const [x0, y0, x1, y1] = w.box;
+      if (prevBottom !== null) out += (y0 > prevBottom - 4 || x0 < prevRight - 4) ? "\n" : " ";
+      if (flagged(w)) {
+        const multi = w.repair.includes(" ") || w.repair === w.claim;
+        out += multi ? `<span class="q" title="flagged, no single-word repair">[${esc(w.claim)}?]</span>` : `<span class="fix" title="was: ${esc(w.claim)}">${esc(w.repair)}</span>`;
+      } else out += esc(w.claim);
+      prevBottom = y1; prevRight = x1;
+    });
+    $("#corrected").innerHTML = out;
+  }
+  $("#overlay").addEventListener("click", (e) => { const r = e.target.closest("rect"); if (r) openWord(state.page, +r.dataset.i); });
+  $("#flaglist").addEventListener("click", (e) => { const r = e.target.closest(".flagrow"); if (r) openWord(state.page, +r.dataset.i); });
+
+  /* ---------- inspect ---------- */
+  P.forEach((pg, i) => $("#fPage").insertAdjacentHTML("beforeend", `<option value="${i}">${esc(pg.title)}</option>`));
+  ["fPage", "fKind"].forEach((id) => $("#" + id).addEventListener("change", () => { drawWordList(true); }));
+  $("#fSearch").addEventListener("input", () => drawWordList());
+  function syncInspectPage() { $("#fPage").value = state.page; }
+
+  function filtered() {
+    const pg = P[+$("#fPage").value], k = $("#fKind").value, q = $("#fSearch").value.trim().toLowerCase();
+    let ws = pg.words;
+    if (k === "featured") ws = pg.featured.map((i) => pg.words[i]);
+    else if (k === "flagged") ws = ws.filter(flagged);
+    else if (k === "errors") ws = ws.filter((w) => !w.correct);
+    else if (k === "missed") ws = ws.filter((w) => !w.correct && !flagged(w));
+    else if (k === "falarm") ws = ws.filter((w) => w.correct && flagged(w));
+    if (q) ws = ws.filter((w) => (w.claim + " " + (w.truth || "")).toLowerCase().includes(q));
+    return { pi: +$("#fPage").value, ws };
+  }
+  function drawWordList(selectFirst) {
+    const { pi, ws } = filtered();
+    $("#wordList").innerHTML = ws.length ? ws.map((w) => {
+      const f = flagged(w);
+      return `<button class="wbtn" data-i="${w.i}" aria-current="${state.sel && state.sel[0] === pi && state.sel[1] === w.i}">
+        <span class="c">${esc(w.claim)}</span><span class="chip ${f ? "bad" : "good"}">${f2(w.p)}</span>
+        <span class="s">${w.correct ? "read correctly" : "OCR error · truth " + esc(w.truth ?? "—")} · ${f ? "flagged" : "accepted"}</span></button>`;
+    }).join("") : `<p class="muted" style="padding:12px">No words match.</p>`;
+    if (selectFirst && ws.length) { state.sel = [pi, ws[0].i]; drawWordList(); drawInspector(); }
+  }
+  $("#wordList").addEventListener("click", (e) => { const b = e.target.closest(".wbtn"); if (!b) return; state.sel = [+$("#fPage").value, +b.dataset.i]; drawWordList(); drawInspector(); });
+
+  function openWord(pi, i) {
+    state.sel = [pi, i]; $("#fPage").value = pi;
+    const w = P[pi].words[i];
+    if ($("#fKind").value === "featured" && !P[pi].featured.includes(i)) $("#fKind").value = "all";
+    $("#fSearch").value = "";
+    showTab("inspect"); drawWordList(); drawInspector();
+    const el = document.querySelector(`.wbtn[data-i="${i}"]`); if (el) el.scrollIntoView({ block: "nearest" });
+  }
+
+  const KL = M.kind_label;
+  function rhoColor(r) { // r: mean rho; 0 = fits as well as a clean print, -15 = does not fit
+    const t = Math.max(0, Math.min(1, -r / 15));
+    const a = [29, 122, 71], b = [214, 160, 40], c = [190, 45, 45];
+    const mix = (u, v, s) => u.map((x, j) => Math.round(x + (v[j] - x) * s));
+    const col = t < .5 ? mix(a, b, t * 2) : mix(b, c, (t - .5) * 2);
+    return `rgb(${col.join(",")})`;
+  }
+  function graphSVG(w) {
+    const nodes = w.graph, Wd = 600, Hd = 420, cx = Wd / 2, cy = Hd / 2;
+    const ci = Math.max(0, nodes.findIndex((n) => n[1] === "claim"));
+    const claim = nodes[ci], rivals = nodes.filter((_, j) => j !== ci);
+    const pos = rivals.map((_, j) => { const a = -Math.PI / 2 + (2 * Math.PI * j) / rivals.length; return [cx + 220 * Math.cos(a), cy + 150 * Math.sin(a)]; });
+    const rad = (q) => 14 + 26 * q;
+    let s = `<svg viewBox="0 0 ${Wd} ${Hd}" role="img" aria-label="Counterfactual string graph">`;
+    rivals.forEach((n, j) => {
+      const [x, y] = pos[j];
+      s += `<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="var(--line)" stroke-width="2"/>`;
+      s += `<text x="${cx + 0.42 * (x - cx) + 6}" y="${cy + 0.42 * (y - cy) - 4}" font-size="10" fill="var(--muted)" text-anchor="start" font-family="var(--f-body)">${esc(n[1])}</text>`;
+    });
+    const node = (n, x, y, isClaim) => {
+      const r = rad(n[4]), m = (n[2] + n[3]) / 2;
+      return `<g><title>${esc(n[0])}: ${KL[n[1]] || n[1]}; ρ TrOCR ${f2(n[2])}, ρ PARSeq ${f2(n[3])}, P_opt ${f3(n[4])}</title>
+        <circle cx="${x}" cy="${y}" r="${r}" fill="${rhoColor(m)}" fill-opacity=".85" stroke="${isClaim ? "var(--ink)" : "var(--panel)"}" stroke-width="${isClaim ? 3 : 1.5}"/>
+        <text x="${x}" y="${y + r + 15}" font-size="14" text-anchor="middle" fill="var(--ink)" font-weight="${isClaim ? 600 : 400}">${esc(n[0])}</text></g>`;
+    };
+    rivals.forEach((n, j) => (s += node(n, pos[j][0], pos[j][1], false)));
+    s += node(claim, cx, cy, true);
+    return s + "</svg>";
+  }
+
+  function drawInspector() {
+    if (!state.sel) { $("#inspector").innerHTML = ""; return; }
+    const [pi, i] = state.sel, w = P[pi].words[i], f = flagged(w);
+    const verdict = f ? `<span class="chip bad">flag for human review</span>` : `<span class="chip good">accept automatically</span>`;
+    const truthChip = w.correct ? `<span class="chip good">the OCR claim is correct</span>` : `<span class="chip bad">the OCR claim is wrong</span>`;
+    const rows = w.graph.map((n) => `<tr class="${n[1] === "claim" ? "claim" : ""}">
+        <td class="mono">${esc(n[0])}</td><td>${R[n[0]] ? `<img src="${R[n[0]]}" alt="clean rendering of ${esc(n[0])}">` : ""}</td>
+        <td>${esc(KL[n[1]] || n[1])}</td><td class="n" style="color:${rhoColor(n[2])}">${f2(n[2])}</td>
+        <td class="n" style="color:${rhoColor(n[3])}">${f2(n[3])}</td><td class="n">${f3(n[4])}</td></tr>`).join("");
+    const rivalTop = w.graph.find((n) => n[1] !== "claim");
+    const claimN = w.graph.find((n) => n[1] === "claim");
+    let why = "";
+    if (claimN && rivalTop) {
+      why = claimN[4] >= rivalTop[4]
+        ? `The claim <b class="mono">${esc(w.claim)}</b> explains the image better than every neighbour it was compared with (ρ TrOCR ${f2(claimN[2])}, ρ PARSeq ${f2(claimN[3])}).`
+        : `The neighbour <b class="mono">${esc(rivalTop[0])}</b> (${esc(KL[rivalTop[1]] || rivalTop[1])}) explains the image better than the claim: ρ TrOCR ${f2(rivalTop[2])} vs ${f2(claimN[2])}, ρ PARSeq ${f2(rivalTop[3])} vs ${f2(claimN[3])}.`;
+    }
+    $("#inspector").innerHTML = `
+      <div class="panel">
+        <div class="verdict">
+          <div>
+            <h2>Word image (crop from the page)</h2>
+            <div class="cropbig"><img src="${w.crop}" alt="word crop"></div>
+            <h2 style="margin-top:14px">Clean renderings R(v)</h2>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+              ${[w.claim, w.repair].filter((v, j, a) => a.indexOf(v) === j).map((v) => R[v] ? `<figure style="margin:0"><img src="${R[v]}" style="height:34px;background:#fff;border:1px solid var(--line);border-radius:4px;padding:2px 4px"><figcaption class="note mono">${esc(v)}</figcaption></figure>` : "").join("")}
+            </div>
+          </div>
+          <div>
+            <h2>Verdict</h2>
+            <div class="pbig">P(correct) = ${f2(w.p)}</div>
+            <div class="meter"><b style="left:${100 * state.thr}%"></b><i style="left:calc(${100 * w.p}% - 1px)"></i></div>
+            <div class="note">threshold ${f2(state.thr)} (change it on the first tab)</div>
+            <p style="margin:10px 0">${verdict}</p>
+            <dl class="kv">
+              <dt>Tesseract claim</dt><dd>${esc(w.claim)}</dd>
+              <dt>Tesseract confidence</dt><dd>${f2(w.conf)}</dd>
+              <dt>LOCUS repair</dt><dd>${f ? esc(w.repair) : "<span class='muted'>(not needed)</span>"}</dd>
+              <dt>TrOCR-base reads</dt><dd>${esc(w.trocr)}</dd>
+              <dt>PARSeq reads</dt><dd>${esc(w.parseq)} <span class="muted">(${f2(w.parseq_conf)})</span></dd>
+              <dt>True text</dt><dd>${esc(w.truth ?? "— (box not matched)")}</dd>
+            </dl>
+            <p style="margin:10px 0 0">${truthChip}</p>
+          </div>
+        </div>
+      </div>
+      <div class="panel sect graphwrap">
+        <h2>Counterfactual string graph</h2>
+        <p style="margin-top:0">${why}</p>
+        ${graphSVG(w)}
+        <p class="note">Centre: the claim. Around it: the strings it could have been confused with. Node size = P_opt (the GNN's belief that this string is the best explanation).
+          Colour = ρ, averaged over the two recognisers: green fits the image as well as a clean print, red does not fit. Hover a node for values.</p>
+      </div>
+      <div class="panel sect">
+        <h2>Every hypothesis</h2>
+        <div class="scroll-x"><table class="htab"><tr><th>string v</th><th>clean rendering</th><th>how it was generated</th><th style="text-align:right">ρ TrOCR</th><th style="text-align:right">ρ PARSeq</th><th style="text-align:right">P_opt</th></tr>${rows}</table></div>
+        <p class="note">ρ(v) = score(v | real crop) − score(v | clean rendering of v), from frozen TrOCR-base and PARSeq. Top ${w.graph.length} hypotheses by P_opt.</p>
+      </div>`;
+  }
+
+  /* ---------- results ---------- */
+  (function drawResults() {
+    const B = M.bench, best = B.cols.map((_, j) => [0, 1].map((k) => Math.max(...B.rows.map((r) => r[j + 1][k]))));
+    let h = `<tr><th>Method</th>${B.cols.map((c) => `<th>${c}</th>`).join("")}<th>Avg F1</th><th>Avg AUROC</th></tr>`;
+    const avg = B.rows.map((r) => [0, 1].map((k) => r.slice(1).reduce((s, v) => s + v[k], 0) / B.cols.length));
+    const bestAvg = [0, 1].map((k) => Math.max(...avg.map((a) => a[k])));
+    B.rows.forEach((r, ri) => {
+      h += `<tr class="${r[0] === "LOCUS" ? "us" : ""}"><td>${esc(r[0])}</td>` + r.slice(1).map((v, j) =>
+        `<td>${[0, 1].map((k) => `<span class="${v[k] === best[j][k] ? "best" : ""}" style="${v[k] === best[j][k] ? "color:var(--good)" : ""}">${f3(v[k])}</span>`).join(" / ")}</td>`).join("") +
+        [0, 1].map((k) => `<td style="${avg[ri][k] === bestAvg[k] ? "color:var(--good)" : ""}">${f3(avg[ri][k])}</td>`).join("") + "</tr>";
+    });
+    $("#benchTable").innerHTML = h;
+
+    const rv = M.review, order = ["FUNSD", "CORD", "SROIE", "IAM", "IIIT5K"].filter((d) => rv[d]);
+    $("#workload").innerHTML = order.map((ds) => {
+      const ms = Object.entries(rv[ds]).filter(([, v]) => !isNaN(v)).sort((a, b) => a[1] - b[1]);
+      return `<div class="wl-row"><b>${ds}</b><div class="wl-bars">${ms.map(([m, v]) =>
+        `<div class="wl-bar ${m === "LOCUS" ? "us" : ""}"><span>${esc(m)}</span><div class="t"><div style="width:${v}%"></div></div><span class="mono">${v.toFixed(0)}%</span></div>`).join("")}</div></div>`;
+    }).join("");
+
+    const ms = M.model_scores;
+    $("#modelTable").innerHTML = `<tr><th>Model</th><th>Test words</th><th>Macro-F1</th><th>AUROC</th><th>Words auto-accepted at 95% precision</th></tr>` +
+      Object.entries(ms).map(([d, s]) => `<tr class="${d === M.model ? "us" : ""}"><td>${d}${d === M.model ? " (this page)" : ""}</td><td>${s.n_test}</td><td>${f3(s.macro_f1)}</td><td>${f3(s.auroc)}</td><td>${Math.round(100 * s["cov@95"])}%</td></tr>`).join("");
+  })();
+
+  /* ---------- init ---------- */
+  drawVerify();
+  $("#fPage").value = 0; drawWordList(true);
+  let t0 = "verify"; try { t0 = localStorage.getItem("locus_tab") || "verify"; } catch (e) {}
+  showTab(["verify", "inspect", "how", "results"].includes(t0) ? t0 : "verify");
+})();
+</script>
+</body>
+</html>
