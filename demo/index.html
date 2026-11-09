@@ -25,7 +25,8 @@
   --warn: #f0b85a; --warn-soft: #3a2c12; color-scheme: dark }
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.55 var(--f-body); }
-.wrap { max-width: 1240px; margin: 0 auto; padding: 20px 16px 56px; }
+.wrap { max-width: 1240px; margin: 0 auto; padding-block: 20px 56px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
 header.top { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 12px 24px; margin-bottom: 18px; }
 .brand h1 { font: 500 clamp(26px, 4vw, 36px)/1.1 var(--f-display); margin: 0; }
 .brand p { margin: 6px 0 0; color: var(--muted); max-width: 70ch; }
