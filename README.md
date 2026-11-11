@@ -153,3 +153,11 @@ segmentation-free counterfactual string graph and render-normalised evidence, an
 ## License
 
 Code: MIT (see `LICENSE`). Datasets remain under their original licences.
+
+## Journal revision experiments (2026-11)
+Additional analyses requested in the review of the journal version:
+`code/revision_exp.py` (run-to-run noise, graph size, pseudo-label variants, threshold recalibration under engine transfer),
+`code/revision_beam.py` (beam-search coverage), `code/revision_bench.py` (throughput profile),
+`code/revision_analysis.py` (coverage, correlated failures, design effect, render subgroups, cascade, claim length, leakage audit)
+and `code/revision_tables.py` (LaTeX tables). Raw outputs: `results/rev_*.jsonl`, `results/rev_bench.json`, `results/rev_analysis.json`.
+Orchestration: `code/rev_lanes.sh`, `code/rev_extra.sh`.
