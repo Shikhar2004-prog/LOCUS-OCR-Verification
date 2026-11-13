@@ -16,6 +16,9 @@ claimed string is the *best explanation of the image among the strings it could 
 4. **Label-free pretraining** on images where two engines agree, plus synthetic OCR-style corruptions. Then
    **few-shot adaptation** from `k` labelled words per class.
 
+> **Accepted paper:** the accepted version of the paper (manuscript, supplementary material and LaTeX source) is in
+> [`accepted_paper/`](accepted_paper/): [`LOCUS_accepted_paper.pdf`](accepted_paper/LOCUS_accepted_paper.pdf).
+
 ![teaser](figures/datasets_examples.png)
 
 ## Application and demo video
